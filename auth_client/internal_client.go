@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -134,7 +133,7 @@ func (ic *internalClient) Signup(username, password string) (string, error) {
 	}
 	defer response.Body.Close()
 
-	responseBody, err := ioutil.ReadAll(response.Body)
+	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
 		return "", err
 	}
@@ -173,7 +172,7 @@ func (ic *internalClient) Login(username, password string) (string, error) {
 	}
 	defer response.Body.Close()
 
-	responseBody, err := ioutil.ReadAll(response.Body)
+	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
 		return "", err
 	}
@@ -271,7 +270,7 @@ func (ic *internalClient) ResetPassword(password, token string) (string, error) 
 	}
 	defer response.Body.Close()
 
-	responseBody, err := ioutil.ReadAll(response.Body)
+	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
 		return "", err
 	}
@@ -302,7 +301,7 @@ func (ic *internalClient) ChangePassword(newPassword, currentPassword string) (s
 	}
 	defer response.Body.Close()
 
-	responseBody, err := ioutil.ReadAll(response.Body)
+	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
 		return "", err
 	}
@@ -343,7 +342,7 @@ func (ic *internalClient) get(path string, dest interface{}) (int, error) {
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return resp.StatusCode, err
 	}
