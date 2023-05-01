@@ -6,15 +6,13 @@ replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v0.0.0-00010101
 
 require (
 	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v0.0.0-00010101000000-000000000000
-	github.com/newrelic/go-agent v3.21.1+incompatible
-	github.com/newrelic/go-agent/v3 v3.21.1
-	github.com/tryvium-travels/memongo v0.9.0
 	go.mongodb.org/mongo-driver v1.11.4
 	go.uber.org/zap v1.24.0
 )
 
+require github.com/acobaugh/osrelease v0.0.0-20181218015638-a93a0a55a249 // indirect
+
 require (
-	github.com/acobaugh/osrelease v0.0.0-20181218015638-a93a0a55a249 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-git/go-billy/v5 v5.4.1 // indirect
 	github.com/gobuffalo/here v0.6.0 // indirect
@@ -30,6 +28,8 @@ require (
 	github.com/markbates/pkger v0.17.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
+	github.com/newrelic/go-agent v3.21.1+incompatible // indirect
+	github.com/newrelic/go-agent/v3 v3.21.1 // indirect
 	github.com/newrelic/go-agent/v3/integrations/nrzap v1.0.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -46,6 +46,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.15.0 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
+	github.com/tryvium-travels/memongo v0.9.0
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.1 // indirect
 	github.com/xdg-go/stringprep v1.0.3 // indirect

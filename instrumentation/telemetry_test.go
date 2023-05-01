@@ -6,7 +6,9 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/newrelic/go-agent/v3/newrelic"
+	"google.golang.org/grpc"
 )
 
 func TestNewServiceTelemetry(t *testing.T) {
@@ -398,6 +400,91 @@ func TestClient_StartSegment(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.s.StartSegment(tt.args.txn, tt.args.name); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Client.StartSegment() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestClient_GetUnaryServerInterceptors(t *testing.T) {
+	tests := []struct {
+		name string
+		s    *Client
+		want []grpc.UnaryServerInterceptor
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.s.GetUnaryServerInterceptors(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Client.GetUnaryServerInterceptors() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestClient_GetStreamServerInterceptors(t *testing.T) {
+	tests := []struct {
+		name string
+		s    *Client
+		want []grpc.StreamServerInterceptor
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.s.GetStreamServerInterceptors(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Client.GetStreamServerInterceptors() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestClient_GetUnaryClientInterceptors(t *testing.T) {
+	tests := []struct {
+		name string
+		s    *Client
+		want []grpc.UnaryClientInterceptor
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.s.GetUnaryClientInterceptors(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Client.GetUnaryClientInterceptors() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestClient_GetStreamClientInterceptors(t *testing.T) {
+	tests := []struct {
+		name string
+		s    *Client
+		want []grpc.StreamClientInterceptor
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.s.GetStreamClientInterceptors(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Client.GetStreamClientInterceptors() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestClient_NewMuxRouter(t *testing.T) {
+	tests := []struct {
+		name string
+		s    *Client
+		want *mux.Router
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.s.NewMuxRouter(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Client.NewMuxRouter() = %v, want %v", got, tt.want)
 			}
 		})
 	}

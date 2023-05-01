@@ -1,4 +1,4 @@
-package instrumentation
+package instrumentation // import "github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
 
 import (
 	"fmt"

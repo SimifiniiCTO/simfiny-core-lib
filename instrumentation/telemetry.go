@@ -1,12 +1,18 @@
-package instrumentation
+package instrumentation // import "github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
 
 import (
 	"context"
 	"net/http"
 
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	newrelicgo "github.com/newrelic/go-agent"
+	nrgorilla "github.com/newrelic/go-agent/_integrations/nrgorilla/v1"
+	"github.com/newrelic/go-agent/_integrations/nrgrpc"
 	"github.com/newrelic/go-agent/v3/integrations/nrzap"
 	"github.com/newrelic/go-agent/v3/newrelic"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 // The `Client` type is a struct that holds information about a service, including its name, version,
@@ -44,6 +50,9 @@ type Client struct {
 	// included when the struct is serialized to JSON. This field is used for logging purposes and allows
 	// the `Client` object to log messages using the `zap` logging library.
 	Logger *zap.Logger `json:"-"`
+	// base service metrics for the service using this library
+	baseMetrics   *ServiceBaseMetrics
+	goAgentClient newrelicgo.Application
 }
 
 // The IServiceTelemetry interface defines methods for collecting telemetry data for a service,
@@ -115,6 +124,11 @@ type IServiceTelemetry interface {
 	StartSegment(txn *newrelic.Transaction, name string) *newrelic.Segment
 	NewRoundtripper(txn *newrelic.Transaction) *http.RoundTripper
 	StartNosqlDatastoreSegment(txn *newrelic.Transaction, operation, collectionName string) *newrelic.DatastoreSegment
+	GetUnaryServerInterceptors() []grpc.UnaryServerInterceptor
+	GetStreamServerInterceptors() []grpc.StreamServerInterceptor
+	GetUnaryClientInterceptors() []grpc.UnaryClientInterceptor
+	GetStreamClientInterceptors() []grpc.StreamClientInterceptor
+	NewMuxRouter() *mux.Router
 }
 
 var _ IServiceTelemetry = &Client{}
@@ -135,6 +149,22 @@ func NewServiceTelemetry(opts ...ServiceTelemetryOption) (*Client, error) {
 		return nil, err
 	}
 
+	// initialize base service metrics set
+	baseMetrics, err := newServiceBaseMetrics(&telemetry.ServiceName)
+	if err != nil {
+		return nil, err
+	}
+
+	// initialize the go agent version of the new relic sdk as this is the only way to
+	// properly instrument our rpc interceptors
+	cfg := newrelicgo.NewConfig(telemetry.ServiceName, telemetry.NewrelicKey)
+	goAgentSdk, err := newrelicgo.NewApplication(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	telemetry.goAgentClient = goAgentSdk
+	telemetry.baseMetrics = baseMetrics
 	return telemetry, nil
 }
 
@@ -289,6 +319,72 @@ func (s *Client) StartMessageQueueSegment(txn *newrelic.Transaction, queueName s
 // StartSegment implements IServiceTelemetry
 func (s *Client) StartSegment(txn *newrelic.Transaction, name string) *newrelic.Segment {
 	return txn.StartSegment(name)
+}
+
+// GetUnaryServerInterceptors implements IServiceTelemetry
+func (s *Client) GetUnaryServerInterceptors() []grpc.UnaryServerInterceptor {
+	opts := []logging.Option{
+		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
+		logging.WithDurationField(logging.DefaultDurationToFields),
+		logging.WithFieldsFromContext(logging.ExtractFields),
+	}
+
+	return []grpc.UnaryServerInterceptor{
+		s.ErrorCountUnaryServerInterceptor(),
+		s.RequestTimeUnaryServerInterceptor(),
+		nrgrpc.UnaryServerInterceptor(s.goAgentClient),
+		logging.UnaryServerInterceptor(InterceptorLogger(s.Logger), opts...),
+	}
+}
+
+// GetStreamServerInterceptors implements IServiceTelemetry
+func (s *Client) GetStreamServerInterceptors() []grpc.StreamServerInterceptor {
+	opts := []logging.Option{
+		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
+		logging.WithDurationField(logging.DefaultDurationToFields),
+		logging.WithFieldsFromContext(logging.ExtractFields),
+	}
+
+	return []grpc.StreamServerInterceptor{
+		s.ErrorCountStreamServerInterceptor(),
+		s.RequestTimeStreamServerInterceptor(),
+		nrgrpc.StreamServerInterceptor(s.goAgentClient),
+		logging.StreamServerInterceptor(InterceptorLogger(s.Logger), opts...),
+	}
+}
+
+// GetUnaryClientInterceptors implements IServiceTelemetry
+func (s *Client) GetUnaryClientInterceptors() []grpc.UnaryClientInterceptor {
+	opts := []logging.Option{
+		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
+		logging.WithDurationField(logging.DefaultDurationToFields),
+		logging.WithFieldsFromContext(logging.ExtractFields),
+	}
+
+	return []grpc.UnaryClientInterceptor{
+		nrgrpc.UnaryClientInterceptor,
+		logging.UnaryClientInterceptor(InterceptorLogger(s.Logger), opts...),
+	}
+}
+
+// GetStreamClientInterceptors implements IServiceTelemetry
+func (s *Client) GetStreamClientInterceptors() []grpc.StreamClientInterceptor {
+	opts := []logging.Option{
+		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
+		logging.WithDurationField(logging.DefaultDurationToFields),
+		logging.WithFieldsFromContext(logging.ExtractFields),
+	}
+
+	return []grpc.StreamClientInterceptor{
+		nrgrpc.StreamClientInterceptor,
+		logging.StreamClientInterceptor(InterceptorLogger(s.Logger), opts...),
+	}
+}
+
+// NewMuxRouter returns a new mux router
+func (s *Client) NewMuxRouter() *mux.Router {
+	r := mux.NewRouter()
+	return nrgorilla.InstrumentRoutes(r, s.goAgentClient)
 }
 
 // ConfigureNewrelicClient configures the newrelic client
