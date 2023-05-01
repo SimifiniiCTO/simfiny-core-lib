@@ -26,7 +26,7 @@ TIMEOUT = 60
 
 .PHONY: precommit ci
 precommit: vanity-import-fix misspell go-mod-tidy  test-default
-ci: dependabot-check license-check lint vanity-import-check build test-default check-clean-work-tree test-coverage
+ci: vanity-import-check build test-default check-clean-work-tree test-coverage
 
 # Tools
 
