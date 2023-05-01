@@ -21,11 +21,6 @@ It provides a set ofpackaeges to directly measure performance and behavior of yo
 | Message Queue - Producer    | Stable | N/A     |
 
 
-Progress and status specific to this repository is tracked in our local
-[project boards](https://github.com/SimifiniiCTO/simfiny-core-lib/projects?query=is%3Aopen)
-and
-[milestones](https://github.com/SimifiniiCTO/simfiny-core-lib/wiki).
-
 Project versioning information and stability guarantees can be found in the
 [versioning documentation](./VERSIONING.md).
 
