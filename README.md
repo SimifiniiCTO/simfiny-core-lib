@@ -6,24 +6,25 @@
 [![Go Report Card](https://goreportcard.com/badge/go.opentelemetry.io/otel)](https://goreportcard.com/report/go.opentelemetry.io/otel)
 [![Slack](https://img.shields.io/badge/slack-@cncf/otel--go-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C01NPAXACKT)
 
-OpenTelemetry-Go is the [Go](https://golang.org/) implementation of [OpenTelemetry](https://opentelemetry.io/).
-It provides a set of APIs to directly measure performance and behavior of your software and send this data to observability platforms.
+Core-Library is the core [Go](https://golang.org/) library of [simfiny](https://www.simfiny.app/login/).
+It provides a set ofpackaeges to directly measure performance and behavior of your software and send this data to observability platforms.
 
 ## Project Status
 
 | Signal  | Status     | Project |
 | ------- | ---------- | ------- |
-| Traces  | Stable     | N/A     |
-| Metrics | Beta       | N/A     |
-| Logs    | Frozen [1] | N/A     |
+| AuthClient  | Stable     | N/A     |
+| Database - Mongo | Beta       | N/A     |
+| Database - Postgres | Beta       | N/A     |
+| Instrumentation    | Stable | N/A     |
+| Message Queue - Consumer    | Stable | N/A     |
+| Message Queue - Producer    | Stable | N/A     |
 
-- [1]: The Logs signal development is halted for this project while we develop both Traces and Metrics.
-   No Logs Pull Requests are currently being accepted.
 
 Progress and status specific to this repository is tracked in our local
-[project boards](https://github.com/open-telemetry/opentelemetry-go/projects)
+[project boards](https://github.com/SimifiniiCTO/simfiny-core-lib/projects?query=is%3Aopen)
 and
-[milestones](https://github.com/open-telemetry/opentelemetry-go/milestones).
+[milestones](https://github.com/SimifiniiCTO/simfiny-core-lib/wiki).
 
 Project versioning information and stability guarantees can be found in the
 [versioning documentation](./VERSIONING.md).
@@ -63,46 +64,6 @@ Currently, this project supports the following environments.
 
 While this project should work for other systems, no compatibility guarantees
 are made for those systems currently.
-
-## Getting Started
-
-You can find a getting started guide on [opentelemetry.io](https://opentelemetry.io/docs/go/getting-started/).
-
-OpenTelemetry's goal is to provide a single set of APIs to capture distributed
-traces and metrics from your application and send them to an observability
-platform. This project allows you to do just that for applications written in
-Go. There are two steps to this process: instrument your application, and
-configure an exporter.
-
-### Instrumentation
-
-To start capturing distributed traces and metric events from your application
-it first needs to be instrumented. The easiest way to do this is by using an
-instrumentation library for your code. Be sure to check out [the officially
-supported instrumentation
-libraries](https://github.com/open-telemetry/opentelemetry-go-contrib/tree/main/instrumentation).
-
-If you need to extend the telemetry an instrumentation library provides or want
-to build your own instrumentation for your application directly you will need
-to use the
-[Go otel](https://pkg.go.dev/go.opentelemetry.io/otel)
-package. The included [examples](./example/) are a good way to see some
-practical uses of this process.
-
-### Export
-
-Now that your application is instrumented to collect telemetry, it needs an
-export pipeline to send that telemetry to an observability platform.
-
-All officially supported exporters for the OpenTelemetry project are contained in the [exporters directory](./exporters).
-
-| Exporter                              | Metrics | Traces |
-| :-----------------------------------: | :-----: | :----: |
-| [Jaeger](./exporters/jaeger/)         |         | ✓      |
-| [OTLP](./exporters/otlp/)             | ✓       | ✓      |
-| [Prometheus](./exporters/prometheus/) | ✓       |        |
-| [stdout](./exporters/stdout/)         | ✓       | ✓      |
-| [Zipkin](./exporters/zipkin/)         |         | ✓      |
 
 ## Contributing
 

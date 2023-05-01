@@ -28,8 +28,8 @@ require (
 	github.com/markbates/pkger v0.17.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
-	github.com/newrelic/go-agent v3.21.1+incompatible // indirect
-	github.com/newrelic/go-agent/v3 v3.21.1 // indirect
+	github.com/newrelic/go-agent v3.21.1+incompatible
+	github.com/newrelic/go-agent/v3 v3.21.1
 	github.com/newrelic/go-agent/v3/integrations/nrzap v1.0.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
