@@ -7,166 +7,142 @@
 package instrumentation
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
 
-func Test_newRequestCountMetric(t *testing.T) {
-	type args struct {
-		serviceName *string
+func TestNewRequestCountMetric(t *testing.T) {
+	serviceName := "test-service"
+	expected := &Metric{
+		MetricName:  fmt.Sprintf("%s.grpc.request.count", serviceName),
+		ServiceName: serviceName,
+		Help:        "Tracks the number of request serviced by the service partitioned by name and status code",
+		Subsystem:   Subsystem(GrpcSubSystem),
+		Namespace:   RequestNamespace,
 	}
-	tests := []struct {
-		name string
-		args args
-		want *Metric
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := newRequestCountMetric(tt.args.serviceName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newRequestCountMetric() = %v, want %v", got, tt.want)
-			}
-		})
+
+	result := newRequestCountMetric(&serviceName)
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("TestNewRequestCountMetric() failed, expected: %+v, result: %+v", result, expected)
 	}
 }
 
-func Test_newRequestLatencyMetric(t *testing.T) {
-	type args struct {
-		serviceName *string
+func TestNewRequestLatencyMetric(t *testing.T) {
+	serviceName := "test-service"
+	expected := &Metric{
+		MetricName:  fmt.Sprintf("%s.grpc.request.latency", serviceName),
+		ServiceName: serviceName,
+		Help:        "Tracks the latency associated with various requests partitioned by service name, target name, status code, and latency",
+		Subsystem:   Subsystem(GrpcSubSystem),
+		Namespace:   RequestNamespace,
 	}
-	tests := []struct {
-		name string
-		args args
-		want *Metric
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := newRequestLatencyMetric(tt.args.serviceName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newRequestLatencyMetric() = %v, want %v", got, tt.want)
-			}
-		})
+
+	result := newRequestLatencyMetric(&serviceName)
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("TestNewRequestLatencyMetric() failed, expected: %+v, result: %+v", result, expected)
 	}
 }
 
-func Test_newErrorCountMetric(t *testing.T) {
-	type args struct {
-		serviceName *string
+func TestNewErrorCountMetric(t *testing.T) {
+	serviceName := "test-service"
+	expected := &Metric{
+		MetricName:  fmt.Sprintf("%s.error.count", serviceName),
+		ServiceName: serviceName,
+		Help:        "Tracks the number of errors encountered by the service",
+		Subsystem:   Subsystem(ErrorSubSystem),
+		Namespace:   ServiceNamespace,
 	}
-	tests := []struct {
-		name string
-		args args
-		want *Metric
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := newErrorCountMetric(tt.args.serviceName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newErrorCountMetric() = %v, want %v", got, tt.want)
-			}
-		})
+
+	result := newErrorCountMetric(&serviceName)
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("TestNewErrorCountMetric() iled, expected: %+v, result: %+v", result, expected)
 	}
 }
 
-func Test_newRequestStatusSummaryMetric(t *testing.T) {
-	type args struct {
-		serviceName *string
+func TestNewRequestStatusSummaryMetric(t *testing.T) {
+	serviceName := "test-service"
+	expected := &Metric{
+		MetricName:  fmt.Sprintf("%s.grpc.request.summary", serviceName),
+		ServiceName: serviceName,
+		Help:        "Tracks the status of all requests serviced by the service",
+		Subsystem:   Subsystem(RequestNamespace),
+		Namespace:   RequestNamespace,
 	}
-	tests := []struct {
-		name string
-		args args
-		want *Metric
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := newRequestStatusSummaryMetric(tt.args.serviceName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newRequestStatusSummaryMetric() = %v, want %v", got, tt.want)
-			}
-		})
+
+	result := newRequestStatusSummaryMetric(&serviceName)
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("TestNewRequestStatusSummaryMric() failed, expected: %+v, result: %+v", result, expected)
 	}
 }
 
-func Test_newDbOperationCounter(t *testing.T) {
-	type args struct {
-		serviceName string
+func TestNewDbOperationCounter(t *testing.T) {
+	serviceName := "test-service"
+	expected := &Metric{
+		MetricName:  fmt.Sprintf("%s.db.operation.counter", serviceName),
+		ServiceName: serviceName,
+		Help:        "Tracks the number of db tx processed by the service",
+		Subsystem:   Subsystem(DbSubSystem),
+		Namespace:   DatabaseNamespace,
 	}
-	tests := []struct {
-		name string
-		args args
-		want *Metric
-	}{
-		// TODO: Add test cases.
+
+	result := newDbOperationCounter(serviceName)
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("TestNewDbOperationCounter failed, expected: %+v, result: %+v", result, expected)
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := newDbOperationCounter(tt.args.serviceName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newDbOperationCounter() = %v, want %v", got, tt.want)
-			}
-		})
+}
+func TestNewDbOperationLatency(t *testing.T) {
+	serviceName := "test-service"
+	expected := &Metric{
+		MetricName:  fmt.Sprintf("%s.db.operation.latency", serviceName),
+		ServiceName: serviceName,
+		Help:        "Tracks the latency of all db tx performed by the service.",
+		Subsystem:   Subsystem(DbSubSystem),
+		Namespace:   DatabaseNamespace,
+	}
+
+	result := newDbOperationLatency(serviceName)
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("TestNewDbOperationLatency failed, expected: %+v, result: %+v", result, expected)
 	}
 }
 
-func Test_newDbOperationLatency(t *testing.T) {
-	type args struct {
-		serviceName string
+func TestNewGrpcRequestCounter(t *testing.T) {
+	serviceName := "test-service"
+	expected := &Metric{
+		MetricName:  fmt.Sprintf("%s.grpc.request.counter", serviceName),
+		ServiceName: serviceName,
+		Help:        "Tracks the number of grpc requests processed by the service. Partitioned by status code and operation",
+		Subsystem:   Subsystem(GrpcSubSystem),
+		Namespace:   RequestNamespace,
 	}
-	tests := []struct {
-		name string
-		args args
-		want *Metric
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := newDbOperationLatency(tt.args.serviceName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newDbOperationLatency() = %v, want %v", got, tt.want)
-			}
-		})
+
+	result := newGrpcRequestCounter(serviceName)
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("TestNewGrpcRequestCounter failed, expected: %+v, result: %+v", result, expected)
 	}
 }
 
-func Test_newGrpcRequestCounter(t *testing.T) {
-	type args struct {
-		serviceName string
+func TestNewGrpcRequestLatency(t *testing.T) {
+	serviceName := "test-service"
+	expected := &Metric{
+		MetricName:  fmt.Sprintf("%s.grpc.request.latency", serviceName),
+		ServiceName: serviceName,
+		Help:        "Tracks the latency of all outgoing grpc requests initiated by the service. Partitioned by status code and operation",
+		Subsystem:   Subsystem(GrpcSubSystem),
+		Namespace:   RequestNamespace,
 	}
-	tests := []struct {
-		name string
-		args args
-		want *Metric
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := newGrpcRequestCounter(tt.args.serviceName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newGrpcRequestCounter() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
-func Test_newGrpcRequestLatency(t *testing.T) {
-	type args struct {
-		serviceName string
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Metric
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := newGrpcRequestLatency(tt.args.serviceName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newGrpcRequestLatency() = %v, want %v", got, tt.want)
-			}
-		})
+	result := newGrpcRequestLatency(serviceName)
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("TestNewGrpcRequestLatency failed, expected: %+v, result: %+v", result, expected)
 	}
 }

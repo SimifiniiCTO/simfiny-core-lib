@@ -8,7 +8,7 @@ package instrumentation // import "github.com/SimifiniiCTO/simfiny-core-lib/inst
 
 import "fmt"
 
-type ServiceBaseMetrics struct {
+type serviceBaseMetrics struct {
 	// Tracks the number of request serviced by the service partitioned by name and status code
 	RequestCountMetric *Metric
 
@@ -41,14 +41,14 @@ var (
 	ErrInvalidServiceName error = fmt.Errorf("invalid input argument, service name cannot be nil")
 )
 
-// newServiceBaseMetrics creates a new ServiceMetrics struct and initializes all of its fields with new metrics
+// newserviceBaseMetrics creates a new ServiceMetrics struct and initializes all of its fields with new metrics
 // that can be emitted
-func newServiceBaseMetrics(serviceName *string) (*ServiceBaseMetrics, error) {
+func newServiceBaseMetrics(serviceName *string) (*serviceBaseMetrics, error) {
 	if serviceName == nil {
 		return nil, ErrInvalidServiceName
 	}
 
-	return &ServiceBaseMetrics{
+	return &serviceBaseMetrics{
 		RequestCountMetric:         newRequestCountMetric(serviceName),
 		RequestLatencyMetric:       newRequestLatencyMetric(serviceName),
 		ErrorCountMetric:           newErrorCountMetric(serviceName),

@@ -1,145 +1,100 @@
 package instrumentation
 
 import (
-	"reflect"
 	"testing"
 
 	"go.uber.org/zap"
 )
 
 func TestWithServiceName(t *testing.T) {
-	type args struct {
-		name string
-	}
-	tests := []struct {
-		name string
-		args args
-		want ServiceTelemetryOption
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := WithServiceName(tt.args.name); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("WithServiceName() = %v, want %v", got, tt.want)
-			}
-		})
+	c := &Client{}
+
+	// Use the WithServiceName option to set the service name
+	WithServiceName("my-service")(c)
+
+	// Check that the service name was set correctly
+	if c.ServiceName != "my-service" {
+		t.Errorf("Service name was not set correctly, expected 'my-service' but got '%s'", c.ServiceName)
 	}
 }
 
 func TestWithServiceVersion(t *testing.T) {
-	type args struct {
-		version string
-	}
-	tests := []struct {
-		name string
-		args args
-		want ServiceTelemetryOption
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := WithServiceVersion(tt.args.version); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("WithServiceVersion() = %v, want %v", got, tt.want)
-			}
-		})
+	c := &Client{}
+
+	WithServiceVersion("1.2.3")(c)
+
+	if c.ServiceVersion != "1.2.3" {
+		t.Errorf("Service version was not set correctly, expected '1.2.3' but got '%s'", c.ServiceVersion)
 	}
 }
 
 func TestWithServiceEnvironment(t *testing.T) {
-	type args struct {
-		environment string
-	}
-	tests := []struct {
-		name string
-		args args
-		want ServiceTelemetryOption
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := WithServiceEnvironment(tt.args.environment); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("WithServiceEnvironment() = %v, want %v", got, tt.want)
-			}
-		})
+	c := &Client{}
+
+	WithServiceEnvironment("production")(c)
+
+	if c.ServiceEnvironment != "production" {
+		t.Errorf("Service environment was not set correctly, expected 'production' but got '%s'", c.ServiceEnvironment)
 	}
 }
 
 func TestWithEnabled(t *testing.T) {
-	type args struct {
-		enabled bool
-	}
-	tests := []struct {
-		name string
-		args args
-		want ServiceTelemetryOption
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := WithEnabled(tt.args.enabled); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("WithEnabled() = %v, want %v", got, tt.want)
-			}
-		})
+	c := &Client{}
+
+	WithEnabled(true)(c)
+
+	if !c.Enabled {
+		t.Errorf("Enabled was not set correctly, expected 'true' but got 'false'")
 	}
 }
 
 func TestWithNewrelicKey(t *testing.T) {
-	type args struct {
-		key string
-	}
-	tests := []struct {
-		name string
-		args args
-		want ServiceTelemetryOption
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := WithNewrelicKey(tt.args.key); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("WithNewrelicKey() = %v, want %v", got, tt.want)
-			}
-		})
+	c := &Client{}
+
+	WithNewrelicKey("abc123")(c)
+
+	if c.NewrelicKey != "abc123" {
+		t.Errorf("New Relic key was not set correctly, expected 'abc123' but got '%s'", c.NewrelicKey)
 	}
 }
 
 func TestWithLogger(t *testing.T) {
-	type args struct {
-		logger *zap.Logger
-	}
-	tests := []struct {
-		name string
-		args args
-		want ServiceTelemetryOption
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := WithLogger(tt.args.logger); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("WithLogger() = %v, want %v", got, tt.want)
-			}
-		})
+	c := &Client{}
+
+	logger := zap.NewExample()
+	WithLogger(logger)(c)
+
+	if c.Logger != logger {
+		t.Errorf("Logger was not set correctly")
 	}
 }
 
-func TestClient_Validate(t *testing.T) {
-	tests := []struct {
-		name    string
-		tr      *Client
-		wantErr bool
-	}{
-		// TODO: Add test cases.
+func TestWithEnableMetrics(t *testing.T) {
+	c := &Client{}
+
+	WithEnableMetrics(true)(c)
+
+	if !c.EnableMetrics {
+		t.Errorf("EnableMetrics was not set correctly, expected 'true' but got 'false'")
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.tr.Validate(); (err != nil) != tt.wantErr {
-				t.Errorf("Client.Validate() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+}
+
+func TestWithEnableTracing(t *testing.T) {
+	c := &Client{}
+
+	WithEnableTracing(true)(c)
+
+	if !c.EnableTracing {
+		t.Errorf("EnableTracing was not set correctly, expected 'true' but got 'false'")
+	}
+}
+
+func TestWithEnableEvents(t *testing.T) {
+	c := &Client{}
+
+	WithEnableEvents(true)(c)
+
+	if !c.EnableEvents {
+		t.Errorf("EnableEvents was not set correctly, expected 'true' but got 'false'")
 	}
 }

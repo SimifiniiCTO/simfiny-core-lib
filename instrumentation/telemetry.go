@@ -40,6 +40,12 @@ type Client struct {
 	ServiceEnvironment string `json:"service_environment"`
 	// wether telemetry is enabled
 	Enabled bool `json:"metrics_enabled"`
+	// wether metrics are enabled
+	EnableMetrics bool `json:"enable_metrics"`
+	// wether tracing is enabled
+	EnableTracing bool `json:"enable_tracing"`
+	// wether events are enabled
+	EnableEvents bool `json:"enable_events"`
 	// The New Relic Sdk Object
 	client *newrelic.Application
 	// `NewrelicKey` is a field in the `Client` struct that holds the New Relic license key. The
@@ -51,7 +57,7 @@ type Client struct {
 	// the `Client` object to log messages using the `zap` logging library.
 	Logger *zap.Logger `json:"-"`
 	// base service metrics for the service using this library
-	baseMetrics   *ServiceBaseMetrics
+	baseMetrics   *serviceBaseMetrics
 	goAgentClient newrelicgo.Application
 }
 
@@ -134,14 +140,14 @@ type IServiceTelemetry interface {
 var _ IServiceTelemetry = &Client{}
 
 // NewServiceTelemetry creates a new Client
-func NewServiceTelemetry(opts ...ServiceTelemetryOption) (*Client, error) {
+func New(opts ...Option) (*Client, error) {
 	telemetry := &Client{}
 
 	for _, opt := range opts {
 		opt(telemetry)
 	}
 
-	if err := telemetry.ConfigureNewrelicClient(); err != nil {
+	if err := telemetry.configureNewrelicClient(); err != nil {
 		return nil, err
 	}
 
@@ -237,7 +243,6 @@ func (s *Client) WithRequest(r *http.Request, trace newrelic.Transaction) *http.
 
 // StartExternalSegment starts an external segment
 func (s *Client) StartExternalSegment(txn *newrelic.Transaction, req *http.Request) *newrelic.ExternalSegment {
-
 	return newrelic.StartExternalSegment(txn, req)
 
 }
@@ -330,8 +335,6 @@ func (s *Client) GetUnaryServerInterceptors() []grpc.UnaryServerInterceptor {
 	}
 
 	return []grpc.UnaryServerInterceptor{
-		s.ErrorCountUnaryServerInterceptor(),
-		s.RequestTimeUnaryServerInterceptor(),
 		nrgrpc.UnaryServerInterceptor(s.goAgentClient),
 		logging.UnaryServerInterceptor(InterceptorLogger(s.Logger), opts...),
 	}
@@ -346,8 +349,6 @@ func (s *Client) GetStreamServerInterceptors() []grpc.StreamServerInterceptor {
 	}
 
 	return []grpc.StreamServerInterceptor{
-		s.ErrorCountStreamServerInterceptor(),
-		s.RequestTimeStreamServerInterceptor(),
 		nrgrpc.StreamServerInterceptor(s.goAgentClient),
 		logging.StreamServerInterceptor(InterceptorLogger(s.Logger), opts...),
 	}
@@ -387,8 +388,8 @@ func (s *Client) NewMuxRouter() *mux.Router {
 	return nrgorilla.InstrumentRoutes(r, s.goAgentClient)
 }
 
-// ConfigureNewrelicClient configures the newrelic client
-func (s *Client) ConfigureNewrelicClient() error {
+// configureNewrelicClient configures the newrelic client
+func (s *Client) configureNewrelicClient() error {
 	client, err := newrelic.NewApplication(
 		newrelic.ConfigAppName(s.ServiceName),
 		newrelic.ConfigLicense(s.NewrelicKey),
@@ -398,16 +399,12 @@ func (s *Client) ConfigureNewrelicClient() error {
 			cfg.ErrorCollector.Enabled = s.Enabled
 			cfg.TransactionEvents.Enabled = s.Enabled
 			cfg.Enabled = s.Enabled
-			cfg.TransactionEvents.Enabled = s.Enabled
 			cfg.Attributes.Enabled = s.Enabled
-			cfg.BrowserMonitoring.Enabled = s.Enabled
 			cfg.TransactionTracer.Enabled = s.Enabled
 			cfg.SpanEvents.Enabled = s.Enabled
 			cfg.RuntimeSampler.Enabled = s.Enabled
 			cfg.DistributedTracer.Enabled = s.Enabled
 			cfg.AppName = s.ServiceName
-			cfg.BrowserMonitoring.Enabled = s.Enabled
-			cfg.CustomInsightsEvents.Enabled = s.Enabled
 			cfg.DatastoreTracer.InstanceReporting.Enabled = s.Enabled
 			cfg.DatastoreTracer.QueryParameters.Enabled = s.Enabled
 			cfg.DatastoreTracer.DatabaseNameReporting.Enabled = s.Enabled

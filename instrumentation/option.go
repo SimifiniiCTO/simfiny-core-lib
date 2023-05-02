@@ -6,48 +6,69 @@ import (
 	"go.uber.org/zap"
 )
 
-// ServiceTelemetryOption is a function that configures a Client
-type ServiceTelemetryOption func(*Client)
+// Option is a function that configures a Client
+type Option func(*Client)
 
 // WithServiceName configures the service name
-func WithServiceName(name string) ServiceTelemetryOption {
+func WithServiceName(name string) Option {
 	return func(t *Client) {
 		t.ServiceName = name
 	}
 }
 
 // WithServiceVersion configures the service version
-func WithServiceVersion(version string) ServiceTelemetryOption {
+func WithServiceVersion(version string) Option {
 	return func(t *Client) {
 		t.ServiceVersion = version
 	}
 }
 
 // WithServiceEnvironment configures the service environment
-func WithServiceEnvironment(environment string) ServiceTelemetryOption {
+func WithServiceEnvironment(environment string) Option {
 	return func(t *Client) {
 		t.ServiceEnvironment = environment
 	}
 }
 
 // WithEnabled configures wether or not instrumentation is enabled
-func WithEnabled(enabled bool) ServiceTelemetryOption {
+func WithEnabled(enabled bool) Option {
 	return func(t *Client) {
 		t.Enabled = enabled
 	}
 }
 
 // WithNewrelicKey configures the newrelic key
-func WithNewrelicKey(key string) ServiceTelemetryOption {
+func WithNewrelicKey(key string) Option {
 	return func(t *Client) {
 		t.NewrelicKey = key
 	}
 }
 
 // WithLogger configures the logger
-func WithLogger(logger *zap.Logger) ServiceTelemetryOption {
+func WithLogger(logger *zap.Logger) Option {
 	return func(t *Client) {
 		t.Logger = logger
+	}
+}
+
+// WithEnableMetrics configures wether or not metrics are enabled
+func WithEnableMetrics(enableMetrics bool) Option {
+	return func(t *Client) {
+		t.EnableMetrics = enableMetrics
+	}
+}
+
+// WithEnableTracing configures wether or not tracing is enabled
+func WithEnableTracing(enableTracing bool) Option {
+	return func(t *Client) {
+		t.EnableTracing = enableTracing
+	}
+}
+
+// WithEnableEvents configures wether or not events are enabled
+func WithEnableEvents(enableEvents bool) Option {
+	return func(t *Client) {
+		t.EnableEvents = enableEvents
 	}
 }
 

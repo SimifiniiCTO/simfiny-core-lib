@@ -89,7 +89,7 @@ func worker(id int, msgChan <-chan *sqs.Message, sqsClient *sqs.SQS, wg *sync.Wa
 
 	// Process incoming messages
 	for message := range msgChan {
-		log.Printf("Worker %d received message: %s", id, *message.Body)
+	    log.Printf("Worker %d received message: %s", id, *message.Body)
 
 	    // Process message here...
 

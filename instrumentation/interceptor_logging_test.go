@@ -1,29 +1,29 @@
 package instrumentation
 
 import (
-	"reflect"
+	"context"
 	"testing"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest/observer"
 )
 
 func TestInterceptorLogger(t *testing.T) {
-	type args struct {
-		l *zap.Logger
-	}
-	tests := []struct {
-		name string
-		args args
-		want logging.Logger
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := InterceptorLogger(tt.args.l); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("InterceptorLogger() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	// create a buffer for test logging output
+	observedZapCore, observedLogs := observer.New(zap.DebugLevel)
+	observedLogger := zap.New(observedZapCore)
+
+	// create a logging.Logger using the InterceptorLogger function
+	interceptorLogger := InterceptorLogger(observedLogger)
+
+	// test logging at different levels
+	interceptorLogger.Log(context.Background(), logging.LevelDebug, "debug message", "key", "value")
+	interceptorLogger.Log(context.Background(), logging.LevelInfo, "info message", "key", "value")
+	interceptorLogger.Log(context.Background(), logging.LevelWarn, "warn message", "key", "value")
+	interceptorLogger.Log(context.Background(), logging.LevelError, "error message", "key", "value")
+
+	// check that log output was captured by the logger
+	assert.Equal(t, observedLogs.Len(), 4)
 }

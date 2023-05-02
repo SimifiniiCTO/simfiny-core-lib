@@ -1,508 +1,265 @@
 package instrumentation
 
 import (
-	"context"
+	"math/rand"
 	"net/http"
-	"reflect"
 	"testing"
+	"time"
 
-	"github.com/gorilla/mux"
+	newrelicgo "github.com/newrelic/go-agent"
 	"github.com/newrelic/go-agent/v3/newrelic"
-	"google.golang.org/grpc"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
-func TestNewServiceTelemetry(t *testing.T) {
-	type args struct {
-		opts []ServiceTelemetryOption
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    *Client
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewServiceTelemetry(tt.args.opts...)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("NewServiceTelemetry() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewServiceTelemetry() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func init() {
+	rand.Seed(time.Now().UnixNano())
 }
 
-func TestClient_IsEnabled(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *Client
-		want bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.IsEnabled(); got != tt.want {
-				t.Errorf("Client.IsEnabled() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-func TestClient_GetServiceEnvironment(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *Client
-		want string
-	}{
-		// TODO: Add test cases.
+func randomString(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.GetServiceEnvironment(); got != tt.want {
-				t.Errorf("Client.GetServiceEnvironment() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestClient_GetServiceName(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *Client
-		want string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.GetServiceName(); got != tt.want {
-				t.Errorf("Client.GetServiceName() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestClient_GetServiceVersion(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *Client
-		want string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.GetServiceVersion(); got != tt.want {
-				t.Errorf("Client.GetServiceVersion() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestClient_GetTraceFromContext(t *testing.T) {
-	type args struct {
-		ctx context.Context
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *newrelic.Transaction
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.GetTraceFromContext(tt.args.ctx); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.GetTraceFromContext() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestClient_GetTraceFromRequest(t *testing.T) {
-	type args struct {
-		r *http.Request
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *newrelic.Transaction
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.GetTraceFromRequest(tt.args.r); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.GetTraceFromRequest() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestClient_GetTracingEnabled(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *Client
-		want bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.GetTracingEnabled(); got != tt.want {
-				t.Errorf("Client.GetTracingEnabled() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	return string(b)
 }
 
 func TestClient_NewChildSpan(t *testing.T) {
-	type args struct {
-		name   string
-		parent newrelic.Transaction
+	// Create a new transaction
+	txn := &newrelic.Transaction{}
+
+	// Create a new client
+	client := &Client{}
+
+	// Start a new child span
+	span := client.NewChildSpan("test", *txn)
+
+	// Assert that the span was started correctly
+	if span == nil {
+		t.Errorf("Expected a newrelic.Segment, but got nil")
 	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *newrelic.Segment
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.NewChildSpan(tt.args.name, tt.args.parent); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.NewChildSpan() = %v, want %v", got, tt.want)
-			}
-		})
+
+	if span.Name != "test" {
+		t.Errorf("Expected span name to be \"test\", but got %s", span.Name)
 	}
 }
 
-func TestClient_StartTransaction(t *testing.T) {
-	type args struct {
-		name string
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *newrelic.Transaction
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.StartTransaction(tt.args.name); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.StartTransaction() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestClient_WithContext(t *testing.T) {
-	type args struct {
-		ctx   context.Context
-		trace newrelic.Transaction
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want context.Context
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.WithContext(tt.args.ctx, tt.args.trace); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.WithContext() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestClient_WithRequest(t *testing.T) {
-	type args struct {
-		r     *http.Request
-		trace newrelic.Transaction
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *http.Request
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.WithRequest(tt.args.r, tt.args.trace); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.WithRequest() = %v, want %v", got, tt.want)
-			}
-		})
+func TestWithRequest(t *testing.T) {
+	s := &Client{}
+	req := &http.Request{}
+	txn := &newrelic.Transaction{}
+	reqWithTrace := s.WithRequest(req, *txn)
+	if reqWithTrace != nil {
+		t.Error("Expected nil request to be returned")
 	}
 }
 
 func TestClient_StartExternalSegment(t *testing.T) {
-	type args struct {
-		txn *newrelic.Transaction
-		req *http.Request
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *newrelic.ExternalSegment
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.StartExternalSegment(tt.args.txn, tt.args.req); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.StartExternalSegment() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	// create a mock transaction
+	app := newrelic.Application{}
+	txn := app.StartTransaction("test", nil, nil)
+
+	// create a mock HTTP request
+	req, err := http.NewRequest("GET", "http://example.com", nil)
+	assert.NoError(t, err)
+
+	// create a client
+	client := &Client{}
+
+	// start the external segment
+	extSeg := client.StartExternalSegment(txn, req)
+
+	// assert that the external segment is not nil
+	assert.NotNil(t, extSeg)
+
+	// end the transaction
+	txn.End()
 }
 
 func TestClient_NewRoundtripper(t *testing.T) {
-	type args struct {
-		txn *newrelic.Transaction
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *http.RoundTripper
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.NewRoundtripper(tt.args.txn); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.NewRoundtripper() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	// create a mock transaction
+	app := newrelic.Application{}
+	txn := app.StartTransaction("test", nil, nil)
+
+	// create a client
+	client := &Client{}
+
+	// create a round tripper
+	roundTripper := client.NewRoundtripper(txn)
+
+	// assert that the round tripper is not nil
+	assert.NotNil(t, roundTripper)
+
+	// end the transaction
+	txn.End()
 }
 
 func TestClient_StartDatastoreSegment(t *testing.T) {
-	type args struct {
-		txn       *newrelic.Transaction
-		operation string
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *newrelic.DatastoreSegment
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.StartDatastoreSegment(tt.args.txn, tt.args.operation); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.StartDatastoreSegment() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	// create a mock transaction
+	app := newrelic.Application{}
+	txn := app.StartTransaction("test", nil, nil)
+
+	// create a client
+	client := &Client{}
+
+	// start the datastore segment
+	dsSeg := client.StartDatastoreSegment(txn, "select")
+
+	// assert that the datastore segment is not nil
+	assert.NotNil(t, dsSeg)
+
+	// end the transaction
+	txn.End()
 }
 
 func TestClient_StartRedisDatastoreSegment(t *testing.T) {
-	type args struct {
-		txn       *newrelic.Transaction
-		operation string
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *newrelic.DatastoreSegment
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.StartRedisDatastoreSegment(tt.args.txn, tt.args.operation); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.StartRedisDatastoreSegment() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	// create a mock transaction
+	app := newrelic.Application{}
+	txn := app.StartTransaction("test", nil, nil)
+
+	// create a client
+	client := &Client{}
+
+	// start the redis datastore segment
+	dsSeg := client.StartRedisDatastoreSegment(txn, "get")
+
+	// assert that the redis datastore segment is not nil
+	assert.NotNil(t, dsSeg)
+
+	// end the transaction
+	txn.End()
 }
 
 func TestClient_StartNosqlDatastoreSegment(t *testing.T) {
-	type args struct {
-		txn            *newrelic.Transaction
-		operation      string
-		collectionName string
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *newrelic.DatastoreSegment
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.StartNosqlDatastoreSegment(tt.args.txn, tt.args.operation, tt.args.collectionName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.StartNosqlDatastoreSegment() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	// create a mock transaction
+	app := newrelic.Application{}
+	txn := app.StartTransaction("test", nil, nil)
+
+	// create a client
+	client := &Client{}
+
+	// start the nosql datastore segment
+	dsSeg := client.StartNosqlDatastoreSegment(txn, "find", "my_collection")
+
+	// assert that the nosql datastore segment is not nil
+	assert.NotNil(t, dsSeg)
+
+	// end the transaction
+	txn.End()
 }
 
 func TestClient_StartMessageQueueSegment(t *testing.T) {
-	type args struct {
-		txn       *newrelic.Transaction
-		queueName string
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *newrelic.MessageProducerSegment
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.StartMessageQueueSegment(tt.args.txn, tt.args.queueName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.StartMessageQueueSegment() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	// create a mock transaction
+	app := newrelic.Application{}
+	txn := app.StartTransaction("test", nil, nil)
+
+	// create a client
+	client := &Client{}
+
+	// start the message queue segment
+	mqSeg := client.StartMessageQueueSegment(txn, "my_queue")
+
+	// assert that the message queue segment is not nil
+	assert.NotNil(t, mqSeg)
+
+	// end the transaction
+	txn.End()
 }
 
 func TestClient_StartSegment(t *testing.T) {
-	type args struct {
-		txn  *newrelic.Transaction
-		name string
-	}
-	tests := []struct {
-		name string
-		s    *Client
-		args args
-		want *newrelic.Segment
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.StartSegment(tt.args.txn, tt.args.name); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.StartSegment() = %v, want %v", got, tt.want)
-			}
-		})
+	txn := &newrelic.Transaction{}
+	name := "segment-name"
+	client := &Client{}
+	segment := client.StartSegment(txn, name)
+
+	if segment == nil {
+		t.Errorf("Expected StartSegment to return a non-nil *newrelic.Segment object")
 	}
 }
 
 func TestClient_GetUnaryServerInterceptors(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *Client
-		want []grpc.UnaryServerInterceptor
-	}{
-		// TODO: Add test cases.
+	agent, err := newrelicgo.NewApplication(newrelicgo.Config{
+		AppName: "test",
+		License: randomString(40),
+	})
+
+	assert.NoError(t, err)
+
+	client := &Client{
+		goAgentClient: agent,
+		Logger:        zap.NewNop(),
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.GetUnaryServerInterceptors(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.GetUnaryServerInterceptors() = %v, want %v", got, tt.want)
-			}
-		})
+
+	interceptors := client.GetUnaryServerInterceptors()
+	if len(interceptors) != 2 {
+		t.Errorf("Expected GetUnaryServerInterceptors to return an array with 2 elements, but got %d", len(interceptors))
 	}
 }
 
 func TestClient_GetStreamServerInterceptors(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *Client
-		want []grpc.StreamServerInterceptor
-	}{
-		// TODO: Add test cases.
+	agent, err := newrelicgo.NewApplication(newrelicgo.Config{
+		AppName: "test",
+		License: randomString(40),
+	})
+
+	assert.NoError(t, err)
+
+	client := &Client{
+		goAgentClient: agent,
+		Logger:        zap.NewNop(),
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.GetStreamServerInterceptors(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.GetStreamServerInterceptors() = %v, want %v", got, tt.want)
-			}
-		})
+
+	interceptors := client.GetStreamServerInterceptors()
+	if len(interceptors) != 2 {
+		t.Errorf("Expected GetStreamServerInterceptors to return an array with 2 elements, but got %d", len(interceptors))
 	}
 }
 
 func TestClient_GetUnaryClientInterceptors(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *Client
-		want []grpc.UnaryClientInterceptor
-	}{
-		// TODO: Add test cases.
+	client := &Client{
+		Logger: zap.NewNop(),
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.GetUnaryClientInterceptors(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.GetUnaryClientInterceptors() = %v, want %v", got, tt.want)
-			}
-		})
+
+	interceptors := client.GetUnaryClientInterceptors()
+	if len(interceptors) != 2 {
+		t.Errorf("Expected GetUnaryClientInterceptors to return an array with 2 elements, but got %d", len(interceptors))
 	}
 }
 
 func TestClient_GetStreamClientInterceptors(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *Client
-		want []grpc.StreamClientInterceptor
-	}{
-		// TODO: Add test cases.
+	client := &Client{
+		Logger: zap.NewNop(),
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.GetStreamClientInterceptors(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.GetStreamClientInterceptors() = %v, want %v", got, tt.want)
-			}
-		})
+
+	interceptors := client.GetStreamClientInterceptors()
+	if len(interceptors) != 2 {
+		t.Errorf("Expected GetStreamClientInterceptors to return an array with 2 elements, but got %d", len(interceptors))
 	}
 }
+func TestConfigureNewrelicClient(t *testing.T) {
+	logger := zap.NewNop()
+	serviceName := "test-service"
+	newrelicKey := randomString(40)
+	enabled := false
 
-func TestClient_NewMuxRouter(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *Client
-		want *mux.Router
-	}{
-		// TODO: Add test cases.
+	// create a new client and configure it
+	client := &Client{
+		ServiceName: serviceName,
+		NewrelicKey: newrelicKey,
+		Enabled:     enabled,
+		Logger:      logger,
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.NewMuxRouter(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Client.NewMuxRouter() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+	err := client.configureNewrelicClient()
 
-func TestClient_ConfigureNewrelicClient(t *testing.T) {
-	tests := []struct {
-		name    string
-		s       *Client
-		wantErr bool
-	}{
-		// TODO: Add test cases.
+	// assert that there were no errors returned
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.s.ConfigureNewrelicClient(); (err != nil) != tt.wantErr {
-				t.Errorf("Client.ConfigureNewrelicClient() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+
+	// assert that the client was configured correctly
+	if client.client == nil {
+		t.Error("expected client to be configured, but it was nil")
 	}
 }
