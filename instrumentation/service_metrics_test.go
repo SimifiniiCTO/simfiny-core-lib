@@ -7,32 +7,23 @@
 package instrumentation
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func Test_newServiceBaseMetrics(t *testing.T) {
-	type args struct {
-		serviceName *string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    *ServiceBaseMetrics
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := newServiceBaseMetrics(tt.args.serviceName)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("newServiceBaseMetrics() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newServiceBaseMetrics() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func TestNewServiceBaseMetrics(t *testing.T) {
+	serviceName := "test-service"
+	metrics, err := newServiceBaseMetrics(&serviceName)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, metrics)
+	assert.Equal(t, metrics.RequestCountMetric.MetricName, "test-service.grpc.request.count")
+	assert.Equal(t, metrics.RequestLatencyMetric.MetricName, "test-service.grpc.request.latency")
+	assert.Equal(t, metrics.ErrorCountMetric.MetricName, "test-service.error.count")
+	assert.Equal(t, metrics.RequestStatusSummaryMetric.MetricName, "test-service.grpc.request.summary")
+	assert.Equal(t, metrics.DbOperationCounter.MetricName, "test-service.db.operation.counter")
+	assert.Equal(t, metrics.DbOperationLatency.MetricName, "test-service.db.operation.latency")
+	assert.Equal(t, metrics.GrpcRequestCounter.MetricName, "test-service.grpc.request.counter")
+	assert.Equal(t, metrics.GrpcRequestLatency.MetricName, "test-service.grpc.request.latency")
 }

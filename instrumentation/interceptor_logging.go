@@ -8,8 +8,12 @@ import (
 	"go.uber.org/zap"
 )
 
-// InterceptorLogger adapts zap logger to interceptor logger.
-// This code is simple enough to be copied and not imported.
+// `InterceptorLogger` is a function that returns a `logging.Logger` which is used as an
+// interceptor for gRPC requests. The function takes a `zap.Logger` as input and returns a
+// `logging.LoggerFunc`. The returned `logging.LoggerFunc` takes in a context, logging level,
+// message, and fields as input and logs the message and fields using the `zap.Logger` with the
+// appropriate logging level. It also adds a caller skip to the `zap.Logger` to skip the logging
+// function call in the stack trace.
 func InterceptorLogger(l *zap.Logger) logging.Logger {
 	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
 		f := make([]zap.Field, 0, len(fields)/2)

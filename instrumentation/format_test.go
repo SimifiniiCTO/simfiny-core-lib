@@ -6,49 +6,44 @@
 
 package instrumentation
 
-import (
-	"reflect"
-	"testing"
-)
+import "testing"
 
-func Test_format(t *testing.T) {
-	type args struct {
-		m          *MetricName
-		metricType MetricType
+func TestFormat(t *testing.T) {
+	// create a test metric name
+	metricName := &MetricName{
+		ServiceName:     "test_service",
+		OperationName:   "test_operation",
+		IsDistributedTx: true,
+		IsDatabaseTx:    true,
+		IsError:         true,
 	}
-	tests := []struct {
-		name string
-		args args
-		want *string
-	}{
-		// TODO: Add test cases.
+
+	// test formatting different metric types
+	countMetric := format(metricName, Count)
+	if *countMetric != "test_service.dtx.db.op.test_operation.error.count" {
+		t.Errorf("format failed, expected: test_service.dtx.db.op.test_operation.error.count, got: %s", *countMetric)
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := format(tt.args.m, tt.args.metricType); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("format() = %v, want %v", got, tt.want)
-			}
-		})
+
+	errorCountMetric := format(metricName, ErrorCount)
+	if *errorCountMetric != "test_service.dtx.db.op.test_operation.error.error_count" {
+		t.Errorf("format failed, expected: test_service.dtx.db.op.test_operation.error.error_count, got: %s", *errorCountMetric)
+	}
+
+	latencyMetric := format(metricName, Latency)
+	if *latencyMetric != "test_service.dtx.db.op.test_operation.error.latency" {
+		t.Errorf("format failed, expected: test_service.dtx.db.op.test_operation.error.latency, got: %s", *latencyMetric)
+	}
+
+	summaryMetric := format(metricName, MetricSummary)
+	if *summaryMetric != "test_service.dtx.db.op.test_operation.error.summary" {
+		t.Errorf("format failed, expected: test_service.dtx.db.op.test_operation.error.summary, got: %s", *summaryMetric)
 	}
 }
 
-func Test_appenSuffix(t *testing.T) {
-	type args struct {
-		metricName string
-		metricType MetricType
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := appenSuffix(tt.args.metricName, tt.args.metricType); got != tt.want {
-				t.Errorf("appenSuffix() = %v, want %v", got, tt.want)
-			}
-		})
+func TestAppenSuffix(t *testing.T) {
+	// test appending suffix to metric name
+	metricName := appenSuffix("test_metric", Count)
+	if metricName != "test_metric.count" {
+		t.Errorf("appenSuffix failed, expected: test_metric.count, got: %s", metricName)
 	}
 }
