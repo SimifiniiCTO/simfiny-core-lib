@@ -3,6 +3,7 @@ module github.com/SimifiniiCTO/simfiny-core-lib/database/redis
 go 1.20
 
 replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.0 => ../../instrumentation
+replace github.com/SimifiniiCTO/simfiny-core-lib => ../..
 
 require (
 	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.0
