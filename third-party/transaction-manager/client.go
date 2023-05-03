@@ -7,9 +7,9 @@ import (
 
 	"github.com/SimifiniiCTO/simfiny-core-lib/database/mongo"
 	"github.com/SimifiniiCTO/simfiny-core-lib/database/postgres"
+	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
 	msq "github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client"
 
-	"github.com/newrelic/go-agent/v3/newrelic"
 	"go.temporal.io/api/serviceerror"
 	"go.temporal.io/api/workflowservice/v1"
 	"go.temporal.io/sdk/client"
@@ -50,9 +50,9 @@ type TransactionManager struct {
 	temporalClient          client.Client
 	temporalNamespaceClient client.NamespaceClient
 	options                 *client.Options
-	newrelicSDK             *newrelic.Application
+	instrumentationClient   *instrumentation.Client
 	logger                  *zap.Logger
-	messageQueueSDK         *msq.Client
+	messageQueueClient      *msq.Client
 	mongoClient             *mongo.Client
 	postgresClient          *postgres.Client
 	retryPolicy             *Policy
@@ -180,7 +180,6 @@ func configureTemporalNamespaceClient(opts *client.Options) (client.NamespaceCli
 	workflowRetentionPeriod := time.Hour * 24
 	if err := c.Register(ctx, &workflowservice.RegisterNamespaceRequest{
 		Namespace:                        opts.Namespace,
-		Description:                      "simfiny user service namespace",
 		OwnerEmail:                       "yoan@simfinii.com",
 		WorkflowExecutionRetentionPeriod: &workflowRetentionPeriod,
 	}); err != nil {

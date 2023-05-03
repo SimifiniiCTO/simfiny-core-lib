@@ -48,7 +48,6 @@ activity := stream.NewActivity(actor, verb, object)
 if _, err := client.CreateActivity(ctx, feedId, activity); err != nil {
     // handle error
 }
-
 ```
 
 ## Fetching Activities
@@ -70,7 +69,6 @@ ctx := context.Background()
 if err := client.FollowFeed(ctx, source, target); err != nil {
     ...
 }
-
 ```
 
 ## Testing
@@ -86,3 +84,4 @@ This will run all the tests in the repository and print out the results.
 ## Contributions
 
 Contributions to the GetStream wrapper are welcome! If you find a bug or have an idea for a new feature, feel free to open an issue or submit a pull request.
+
