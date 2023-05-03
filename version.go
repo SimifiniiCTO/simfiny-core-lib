@@ -16,5 +16,5 @@ package corelib // import "github.com/SimifiniiCTO/simfiny-core-lib"
 
 // Version is the current release version of OpenTelemetry in use.
 func Version() string {
-	return "1.0.2"
+	return "1.0.3"
 }
