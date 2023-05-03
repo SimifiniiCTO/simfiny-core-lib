@@ -14,7 +14,7 @@
 
 module-sets:
   stable-v1:
-    version: v1.0.3
+    version: v1.0.4
     modules:
       - github.com/SimifiniiCTO/simfiny-core-lib
 excluded-modules:
