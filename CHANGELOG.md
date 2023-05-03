@@ -2,6 +2,7 @@
 ## [Unreleased]
 
 ### Chore
+- update makefile
 - update changelog process
 - checkpoint
 
