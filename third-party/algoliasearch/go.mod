@@ -2,10 +2,10 @@ module github.com/SimifiniiCTO/simfiny-core-lib/third-party/algoliasearch
 
 go 1.20
 
-replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.0 => ../../instrumentation
+replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.1 => ../../instrumentation
 
 require (
-	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.0
+	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.1
 	github.com/algolia/algoliasearch-client-go/v3 v3.28.1
 	github.com/stretchr/testify v1.8.2
 )

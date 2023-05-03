@@ -2,10 +2,12 @@ module github.com/SimifiniiCTO/simfiny-core-lib/message_queue/consumer
 
 go 1.20
 
-replace github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client v1.0.0 => ../client
+replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.1 => ../../instrumentation
+
+replace github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client v1.0.1 => ../client
 
 require (
-	github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client v1.0.0
+	github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client v1.0.1
 	github.com/newrelic/go-agent/v3 v3.21.1
 	go.uber.org/zap v1.24.0
 )
