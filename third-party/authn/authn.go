@@ -4,7 +4,7 @@
 // not use this file except in compliance with the License. You may obtain
 // a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 
-package authclient // import "github.com/SimifiniiCTO/simfiny-core-lib/authclient"
+package authn // import "github.com/SimifiniiCTO/simfiny-core-lib/third-party/authn"
 
 import (
 	"errors"
@@ -45,8 +45,8 @@ var (
 	}
 )
 
-// NewClient returns an initialized and configured Client.
-func NewClient(config Config, origin string, retryConfig *RetryConfig) (*Client, error) {
+// New returns an initialized and configured Client.
+func New(config Config, origin string, retryConfig *RetryConfig) (*Client, error) {
 	var err error
 	config.setDefaults()
 
@@ -210,7 +210,7 @@ func defaultClient() *Client {
 // Configure initializes the default AuthN client with the given config. This is necessary to
 // use lib.SubjectFrom without keeping a reference to your own AuthN client.
 func Configure(config Config, origin string) error {
-	client, err := NewClient(config, origin, &defaultRetryConfigs)
+	client, err := New(config, origin, &defaultRetryConfigs)
 	if err != nil {
 		return err
 	}

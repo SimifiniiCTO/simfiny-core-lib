@@ -1,4 +1,4 @@
-# Core Library (Database())
+# Core Library (Signal)
 
 One Paragraph of the project description
 
