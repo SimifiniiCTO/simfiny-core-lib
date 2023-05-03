@@ -8,7 +8,6 @@ require (
 	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v0.0.0-00010101000000-000000000000
 	github.com/alicebob/miniredis/v2 v2.30.2
 	github.com/gomodule/redigo v1.8.9
-	github.com/stefanprodan/podinfo v1.8.0
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.24.0
 )
