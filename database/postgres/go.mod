@@ -14,7 +14,7 @@ require (
 
 require (
 	github.com/mattn/go-sqlite3 v1.14.15 // indirect
-	github.com/rogpeppe/go-internal v1.9.0 // indirect
+	github.com/rogpeppe/go-internal v1.10.0 // indirect
 )
 
 require (
