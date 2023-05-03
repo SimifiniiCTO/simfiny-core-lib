@@ -132,6 +132,15 @@ func New(options ...Option) (*Client, error) {
 	return c, nil
 }
 
+// Close closes the database connection
+func (c *Client) Close() error {
+	sqlDB, err := c.Engine.DB()
+	if err != nil {
+		return err
+	}
+	return sqlDB.Close()
+}
+
 // connect attempts to connect to the database using retries
 func (c *Client) connect() error {
 	var connection = make(chan *gorm.DB, 1)
