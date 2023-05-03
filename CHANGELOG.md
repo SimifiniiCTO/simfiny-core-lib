@@ -2,6 +2,7 @@
 ## [Unreleased]
 
 ### Chore
+- update changelog process
 - checkpoint
 
 ### Feat
