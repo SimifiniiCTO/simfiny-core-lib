@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package corelib // import "github.com/SimifiniiCTO/simfiny-core-lib/database/corelib"
+package corelib // import "github.com/SimifiniiCTO/simfiny-core-lib"
 
 // Version is the current release version of OpenTelemetry in use.
 func Version() string {
