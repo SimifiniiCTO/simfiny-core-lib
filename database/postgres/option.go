@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
+	"go.uber.org/zap"
 )
 
 // Option is a function that sets a parameter for the client
@@ -83,6 +84,10 @@ func (c *Client) Validate() error {
 		return fmt.Errorf("instrumentation client is nil")
 	}
 
+	if c.Logger == nil {
+		return fmt.Errorf("logger is nil")
+	}
+
 	return nil
 }
 
@@ -111,5 +116,12 @@ func WithMaxConnectionLifetime(maxConnectionLifetime *time.Duration) Option {
 func WithInstrumentationClient(instrumentationClient *instrumentation.Client) Option {
 	return func(conn *Client) {
 		conn.InstrumentationClient = instrumentationClient
+	}
+}
+
+// WithLogger sets the logger
+func WithLogger(logger *zap.Logger) Option {
+	return func(conn *Client) {
+		conn.Logger = logger
 	}
 }

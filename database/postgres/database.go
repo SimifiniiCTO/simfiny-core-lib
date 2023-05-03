@@ -12,6 +12,7 @@ import (
 
 	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
 	"github.com/giantswarm/retry-go"
+	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -82,6 +83,12 @@ type Client struct {
 	// collecting metrics and traces, which can be used to monitor the performance and behavior of the
 	// database connection.
 	InstrumentationClient *instrumentation.Client
+	// `Logger *zap.Logger` is a field of the `Client` struct that holds a pointer to an instance of the
+	// `zap.Logger` struct. This field is used to pass a logger to the `Client` instance, which can be used
+	// to log messages related to the database operations performed by the client. The `zap.Logger` struct
+	// provides methods for logging messages at different levels of severity, which can be used to monitor
+	// the behavior of the database connection and diagnose issues that may arise.
+	Logger *zap.Logger
 }
 
 // The New function creates a new client with optional configuration options.
