@@ -14,20 +14,8 @@
 
 module-sets:
   stable-v1:
-    version: v1.0.2
+    version: v1.0.3
     modules:
       - github.com/SimifiniiCTO/simfiny-core-lib
-      - github.com/SimifiniiCTO/simfiny-core-lib/database
-      - github.com/SimifiniiCTO/simfiny-core-lib/database/mongo
-      - github.com/SimifiniiCTO/simfiny-core-lib/database/postgres
-      - github.com/SimifiniiCTO/simfiny-core-lib/database/redis
-      - github.com/SimifiniiCTO/simfiny-core-lib/instrumentation
-      - github.com/SimifiniiCTO/simfiny-core-lib/message_queue
-      - github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client
-      - github.com/SimifiniiCTO/simfiny-core-lib/message_queue/consumer
-      - github.com/SimifiniiCTO/simfiny-core-lib/third-party
-      - github.com/SimifiniiCTO/simfiny-core-lib/third-party/algoliasearch
-      - github.com/SimifiniiCTO/simfiny-core-lib/third-party/authn
-      - github.com/SimifiniiCTO/simfiny-core-lib/signals
 excluded-modules:
   - github.com/SimifiniiCTO/simfiny-core-lib/internal/tools
