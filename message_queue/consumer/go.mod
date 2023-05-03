@@ -7,7 +7,7 @@ replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation => ../../instru
 replace github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client => ../client
 
 require (
-	github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client v1.0.1
+	github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client v1.0.2
 	github.com/newrelic/go-agent/v3 v3.21.1
 	go.uber.org/zap v1.24.0
 )
