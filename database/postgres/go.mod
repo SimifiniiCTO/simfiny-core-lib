@@ -5,7 +5,7 @@ go 1.20
 replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v0.0.0-00010101000000-000000000000 => ../../instrumentation
 
 require (
-	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v0.0.0-00010101000000-000000000000
+	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.0
 	github.com/giantswarm/retry-go v0.0.0-20151203102909-d78cea247d5e
 	github.com/jinzhu/gorm v1.9.16
 	gorm.io/driver/postgres v1.5.0
