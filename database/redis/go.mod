@@ -2,10 +2,13 @@ module github.com/SimifiniiCTO/simfiny-core-lib/database/redis
 
 go 1.20
 
-replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v0.0.0-00010101000000-000000000000 => ../../instrumentation
+replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.0 => ../../instrumentation
+
+replace github.com/SimifiniiCTO/simfiny-core-lib => ../..
 
 require (
-	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v0.0.0-00010101000000-000000000000
+	github.com/SimifiniiCTO/simfiny-core-lib v1.0.0
+	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.0
 	github.com/alicebob/miniredis/v2 v2.30.2
 	github.com/gomodule/redigo v1.8.9
 	github.com/stretchr/testify v1.8.2

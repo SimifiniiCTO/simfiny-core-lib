@@ -2,10 +2,10 @@ module github.com/SimifiniiCTO/simfiny-core-lib/database/mongo
 
 go 1.20
 
-replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v0.0.0-00010101000000-000000000000 => ../../instrumentation
+replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.0 => ../../instrumentation
 
 require (
-	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v0.0.0-00010101000000-000000000000
+	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.0
 	go.mongodb.org/mongo-driver v1.11.4
 	go.uber.org/zap v1.24.0
 )
