@@ -7,8 +7,8 @@ replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation => ../../instru
 replace github.com/SimifiniiCTO/simfiny-core-lib => ../..
 
 require (
-	github.com/SimifiniiCTO/simfiny-core-lib v1.0.1
-	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.1
+	github.com/SimifiniiCTO/simfiny-core-lib v1.0.2
+	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.2
 	github.com/alicebob/miniredis/v2 v2.30.2
 	github.com/gomodule/redigo v1.8.9
 	github.com/stretchr/testify v1.8.2

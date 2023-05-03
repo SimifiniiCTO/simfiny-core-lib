@@ -14,7 +14,7 @@
 
 module-sets:
   stable-v1:
-    version: v1.0.1
+    version: v1.0.2
     modules:
       - github.com/SimifiniiCTO/simfiny-core-lib
       - github.com/SimifiniiCTO/simfiny-core-lib/database

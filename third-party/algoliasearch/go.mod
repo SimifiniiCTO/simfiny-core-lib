@@ -5,7 +5,7 @@ go 1.20
 replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation => ../../instrumentation
 
 require (
-	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.1
+	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.2
 	github.com/algolia/algoliasearch-client-go/v3 v3.28.1
 	github.com/stretchr/testify v1.8.2
 )
