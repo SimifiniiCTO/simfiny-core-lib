@@ -12,7 +12,7 @@ type MongoTx func(sessCtx mongo.SessionContext) (any, error)
 
 // ComplexTransaction is a wrapper around the `WithTransaction` method of the `mongo.Session` object.
 func (c *Client) ComplexTransaction(ctx context.Context, callback MongoTx) (any, error) {
-	session, err := c.conn.StartSession()
+	session, err := c.Conn.StartSession()
 	if err != nil {
 		return nil, fmt.Errorf("failed creating session | %s", err.Error())
 	}
@@ -29,7 +29,7 @@ func (c *Client) ComplexTransaction(ctx context.Context, callback MongoTx) (any,
 
 // StandardTransaction is a wrapper around the `WithTransaction` method of the `mongo.Session` object.
 func (c *Client) StandardTransaction(ctx context.Context, callback MongoTx) error {
-	session, err := c.conn.StartSession()
+	session, err := c.Conn.StartSession()
 	if err != nil {
 		return fmt.Errorf("failed creating session | %s", err.Error())
 	}

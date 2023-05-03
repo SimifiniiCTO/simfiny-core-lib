@@ -73,7 +73,7 @@ func NewInMemoryTestDbClient(collectionNames []string) (*InMemoryTestDbClient, e
 // This function must be called once after all tests have finished running.
 func (c *InMemoryTestDbClient) Teardown() error {
 	// Dropping the test database causes an error against Atlas Data Lake.
-	conn := c.Client.conn
+	conn := c.Client.Conn
 	table := c.DatabaseName
 	inMemoryServer := c.Server
 

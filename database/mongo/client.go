@@ -17,7 +17,7 @@ type IClient interface{}
 
 type Client struct {
 	// Conn serves as the database co
-	conn *mongo.Client
+	Conn *mongo.Client
 	// Logger is the logging utility used by this object
 	Logger *zap.Logger
 	// MaxConnectionAttempts outlines the maximum connection attempts
@@ -68,7 +68,7 @@ func New(options ...Option) (*Client, error) {
 		return nil, err
 	}
 
-	client.conn = conn
+	client.Conn = conn
 
 	// create the collections
 	if err := client.createCollections(); err != nil {
@@ -80,7 +80,7 @@ func New(options ...Option) (*Client, error) {
 
 // Close closes the database connection
 func (c *Client) Close() error {
-	return c.conn.Disconnect(context.Background())
+	return c.Conn.Disconnect(context.Background())
 }
 
 // GetCollection returns a collection object by name
@@ -94,7 +94,7 @@ func (c *Client) GetCollection(name string) (*mongo.Collection, error) {
 
 // GetConnection returns the database connection
 func (c *Client) GetConnection() *mongo.Client {
-	return c.conn
+	return c.Conn
 }
 
 // connect establishes a connection to the database
@@ -123,8 +123,8 @@ func (c *Client) connect() (*mongo.Client, error) {
 // createCollections creates a database (mongodb) collection if it doesn't already exist
 func (c *Client) createCollections() error {
 	ctx := context.Background()
-	if c.conn == nil {
-		return fmt.Errorf("invalid input argument. database connection: %v", c.conn)
+	if c.Conn == nil {
+		return fmt.Errorf("invalid input argument. database connection: %v", c.Conn)
 	}
 
 	if c.DatabaseName == nil {
@@ -132,7 +132,7 @@ func (c *Client) createCollections() error {
 	}
 
 	// check if collection already exists
-	db := c.conn.Database(*c.DatabaseName)
+	db := c.Conn.Database(*c.DatabaseName)
 	collections, err := db.ListCollectionNames(ctx, bson.D{{}})
 	if err != nil {
 		return err
