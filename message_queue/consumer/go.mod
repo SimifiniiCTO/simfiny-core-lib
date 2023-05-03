@@ -2,9 +2,9 @@ module github.com/SimifiniiCTO/simfiny-core-lib/message_queue/consumer
 
 go 1.20
 
-replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.1 => ../../instrumentation
+replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation => ../../instrumentation
 
-replace github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client v1.0.1 => ../client
+replace github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client => ../client
 
 require (
 	github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client v1.0.1

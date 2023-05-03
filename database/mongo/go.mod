@@ -2,7 +2,7 @@ module github.com/SimifiniiCTO/simfiny-core-lib/database/mongo
 
 go 1.20
 
-replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.1 => ../../instrumentation
+replace github.com/SimifiniiCTO/simfiny-core-lib/instrumentation => ../../instrumentation
 
 require (
 	github.com/SimifiniiCTO/simfiny-core-lib/instrumentation v1.0.1
