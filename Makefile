@@ -237,3 +237,6 @@ add-license: ## Find all .go files not in the vendor directory and try to write 
 	# Check for any changes made with -G. to ignore permissions changes. Exit with a non-zero
 	# exit code if there is a diff.
 	git diff -G. --quiet
+
+changelog:
+	changelog -M && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md'

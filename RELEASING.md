@@ -25,8 +25,6 @@ Update go.mod for submodules to depend on the new release which will happen in t
 
     ```go
     git merge prerelease_<module set>_<new tag>
-    ```
-
 3. Update the [Changelog](./CHANGELOG.md).
    - Make sure all relevant changes for this release are included and are in language that non-contributors to the project can understand.
        To verify this, you can look directly at the commits since the `<last tag>`.
@@ -34,7 +32,10 @@ Update go.mod for submodules to depend on the new release which will happen in t
        ```
        git --no-pager log --pretty=oneline "<last tag>..HEAD"
        ```
-
+   - Run the following command to generate the changelog
+        ```
+        git-chglog --output CHANGELOG.md
+        ```
    - Move all the `Unreleased` changes into a new section following the title scheme (`[<new tag>] - <date of release>`).
    - Update all the appropriate links at the bottom.
 
