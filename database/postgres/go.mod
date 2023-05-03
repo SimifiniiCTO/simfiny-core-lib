@@ -12,10 +12,7 @@ require (
 	gorm.io/gorm v1.25.0
 )
 
-require (
-	github.com/mattn/go-sqlite3 v1.14.15 // indirect
-	github.com/rogpeppe/go-internal v1.10.0 // indirect
-)
+require github.com/mattn/go-sqlite3 v1.14.15 // indirect
 
 require (
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
