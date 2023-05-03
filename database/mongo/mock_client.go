@@ -37,7 +37,7 @@ type InMemoryTestDbClient struct {
 // NewInMemoryTestDbClient creates a new in-memory MongoDB database and returns a client to it.
 func NewInMemoryTestDbClient(collectionNames []string) (*InMemoryTestDbClient, error) {
 	stopConflictingProcesses(dEFAULT_PORT)
-	server, err := mim.StartWithOptions(&mim.Options{MongoVersion: "6.0.0", ShouldUseReplica: true, DownloadURL: "https://fastdl.mongodb.org/osx/mongodb-macos-arm64-6.0.0.tgz"})
+	server, err := mim.StartWithOptions(&mim.Options{MongoVersion: "6.0.0", ShouldUseReplica: false, DownloadURL: "https://fastdl.mongodb.org/osx/mongodb-macos-arm64-6.0.0.tgz"})
 	if err != nil {
 		return nil, err
 	}
