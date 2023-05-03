@@ -78,6 +78,11 @@ func New(options ...Option) (*Client, error) {
 	return client, nil
 }
 
+// Close closes the database connection
+func (c *Client) Close() error {
+	return c.conn.Disconnect(context.Background())
+}
+
 // GetCollection returns a collection object by name
 func (c *Client) GetCollection(name string) (*mongo.Collection, error) {
 	if value, ok := c.collectionNameToCollectionObjectMap[name]; ok {
