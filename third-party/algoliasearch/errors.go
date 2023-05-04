@@ -11,4 +11,6 @@ var (
 	ErrMissingIndexName = errors.New("missing index name")
 	// ErrMissingObjectID is returned when the object id is missing
 	ErrMissingObjectID = errors.New("missing object id")
+	// ErrMissingTelemetrySDK is returned when the telemetry sdk is missing
+	ErrMissingTelemetrySDK = errors.New("missing telemetry sdk")
 )

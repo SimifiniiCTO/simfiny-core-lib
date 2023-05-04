@@ -41,8 +41,9 @@ func New(opts ...Option) (*Client, error) {
 	index := client.InitIndex(config.IndexName)
 
 	h := &Client{
-		client: client,
-		index:  index,
+		client:       client,
+		index:        index,
+		telemetrySdk: config.TelemetrySDK,
 	}
 
 	// configure index search settings

@@ -3,6 +3,7 @@ package algoliasearch
 import (
 	"testing"
 
+	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,6 +13,7 @@ func TestAlgoliaSearchConfig_Validate(t *testing.T) {
 		ApplicationID: "test-app-id",
 		APIKey:        "test-api-key",
 		IndexName:     "test-index-name",
+		TelemetrySDK:  &instrumentation.Client{},
 	}
 	err := config.Validate()
 	assert.Nil(t, err)
@@ -50,6 +52,7 @@ func TestNewClient(t *testing.T) {
 		WithAlgoliaSearchApplicationID("test-app-id"),
 		WithAlgoliaSearchAPIKey("test-api-key"),
 		WithAlgoliaSearchIndexName("test-index-name"),
+		WithAlgoliaSearchTelemetrySDK(&instrumentation.Client{}),
 	)
 	assert.NotNil(t, client)
 	assert.Nil(t, err)

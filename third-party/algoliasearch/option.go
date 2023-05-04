@@ -12,7 +12,7 @@ type (
 		// IndexName is the name of the index to use
 		IndexName string
 		// TelemetrySDK is the telemetry sdk
-		TelemetrySDK instrumentation.Client
+		TelemetrySDK *instrumentation.Client
 	}
 )
 
@@ -30,6 +30,10 @@ func (c *Config) Validate() error {
 
 	if c.IndexName == "" {
 		return ErrMissingIndexName
+	}
+
+	if c.TelemetrySDK == nil {
+		return ErrMissingTelemetrySDK
 	}
 
 	return nil
@@ -53,5 +57,12 @@ func WithAlgoliaSearchAPIKey(key string) Option {
 func WithAlgoliaSearchIndexName(name string) Option {
 	return func(c *Config) {
 		c.IndexName = name
+	}
+}
+
+// WithAlgoliaSearchTelemetrySDK sets the telemetry sdk for the algolia search handler
+func WithAlgoliaSearchTelemetrySDK(sdk *instrumentation.Client) Option {
+	return func(c *Config) {
+		c.TelemetrySDK = sdk
 	}
 }
