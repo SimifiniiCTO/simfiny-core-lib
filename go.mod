@@ -13,8 +13,10 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5
 	github.com/hashicorp/go-retryablehttp v0.7.2
 	github.com/jinzhu/gorm v1.9.16
-	github.com/newrelic/go-agent v3.21.1+incompatible
 	github.com/newrelic/go-agent/v3 v3.21.1
+	github.com/newrelic/go-agent/v3/integrations/nrgorilla v1.1.1
+	github.com/newrelic/go-agent/v3/integrations/nrgrpc v1.3.2
+	github.com/newrelic/go-agent/v3/integrations/nrmongo v1.0.3
 	github.com/newrelic/go-agent/v3/integrations/nrzap v1.0.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/spf13/viper v1.15.0

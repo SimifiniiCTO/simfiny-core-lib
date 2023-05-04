@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
-	"github.com/newrelic/go-agent/_integrations/nrmongo"
+	"github.com/newrelic/go-agent/v3/integrations/nrmongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

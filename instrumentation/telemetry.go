@@ -6,9 +6,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-	newrelicgo "github.com/newrelic/go-agent"
-	nrgorilla "github.com/newrelic/go-agent/_integrations/nrgorilla/v1"
-	"github.com/newrelic/go-agent/_integrations/nrgrpc"
+	nrgorilla "github.com/newrelic/go-agent/v3/integrations/nrgorilla"
+	"github.com/newrelic/go-agent/v3/integrations/nrgrpc"
 	"github.com/newrelic/go-agent/v3/integrations/nrzap"
 	"github.com/newrelic/go-agent/v3/newrelic"
 	"go.uber.org/zap"
@@ -57,8 +56,7 @@ type Client struct {
 	// the `Client` object to log messages using the `zap` logging library.
 	Logger *zap.Logger `json:"-"`
 	// base service metrics for the service using this library
-	baseMetrics   *serviceBaseMetrics
-	goAgentClient newrelicgo.Application
+	baseMetrics *serviceBaseMetrics
 }
 
 // The IServiceTelemetry interface defines methods for collecting telemetry data for a service,
@@ -161,15 +159,6 @@ func New(opts ...Option) (*Client, error) {
 		return nil, err
 	}
 
-	// initialize the go agent version of the new relic sdk as this is the only way to
-	// properly instrument our rpc interceptors
-	cfg := newrelicgo.NewConfig(telemetry.ServiceName, telemetry.NewrelicKey)
-	goAgentSdk, err := newrelicgo.NewApplication(cfg)
-	if err != nil {
-		return nil, err
-	}
-
-	telemetry.goAgentClient = goAgentSdk
 	telemetry.baseMetrics = baseMetrics
 	return telemetry, nil
 }
@@ -335,7 +324,7 @@ func (s *Client) GetUnaryServerInterceptors() []grpc.UnaryServerInterceptor {
 	}
 
 	return []grpc.UnaryServerInterceptor{
-		nrgrpc.UnaryServerInterceptor(s.goAgentClient),
+		nrgrpc.UnaryServerInterceptor(s.client),
 		logging.UnaryServerInterceptor(InterceptorLogger(s.Logger), opts...),
 	}
 }
@@ -349,7 +338,7 @@ func (s *Client) GetStreamServerInterceptors() []grpc.StreamServerInterceptor {
 	}
 
 	return []grpc.StreamServerInterceptor{
-		nrgrpc.StreamServerInterceptor(s.goAgentClient),
+		nrgrpc.StreamServerInterceptor(s.client),
 		logging.StreamServerInterceptor(InterceptorLogger(s.Logger), opts...),
 	}
 }
@@ -385,7 +374,8 @@ func (s *Client) GetStreamClientInterceptors() []grpc.StreamClientInterceptor {
 // NewMuxRouter returns a new mux router
 func (s *Client) NewMuxRouter() *mux.Router {
 	r := mux.NewRouter()
-	return nrgorilla.InstrumentRoutes(r, s.goAgentClient)
+	r.Use(nrgorilla.Middleware(s.client))
+	return r
 }
 
 // configureNewrelicClient configures the newrelic client

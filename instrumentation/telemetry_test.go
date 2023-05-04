@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	newrelicgo "github.com/newrelic/go-agent"
 	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
@@ -180,16 +179,9 @@ func TestClient_StartSegment(t *testing.T) {
 }
 
 func TestClient_GetUnaryServerInterceptors(t *testing.T) {
-	agent, err := newrelicgo.NewApplication(newrelicgo.Config{
-		AppName: "test",
-		License: randomString(40),
-	})
-
-	assert.NoError(t, err)
-
 	client := &Client{
-		goAgentClient: agent,
-		Logger:        zap.NewNop(),
+		Logger: zap.NewNop(),
+		client: &newrelic.Application{},
 	}
 
 	interceptors := client.GetUnaryServerInterceptors()
@@ -199,16 +191,9 @@ func TestClient_GetUnaryServerInterceptors(t *testing.T) {
 }
 
 func TestClient_GetStreamServerInterceptors(t *testing.T) {
-	agent, err := newrelicgo.NewApplication(newrelicgo.Config{
-		AppName: "test",
-		License: randomString(40),
-	})
-
-	assert.NoError(t, err)
-
 	client := &Client{
-		goAgentClient: agent,
-		Logger:        zap.NewNop(),
+		Logger: zap.NewNop(),
+		client: &newrelic.Application{},
 	}
 
 	interceptors := client.GetStreamServerInterceptors()
