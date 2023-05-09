@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
 	client "github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client"
-	"github.com/newrelic/go-agent/v3/newrelic"
 	"go.uber.org/zap"
 )
 
@@ -64,7 +64,7 @@ type ConsumerClient struct {
 	// tracing application performance. It allows for the collection of metrics and tracing of requests
 	// across distributed systems. This suggests that the consumer client is being monitored and tracked
 	// for performance using New Relic.
-	NewRelicClient *newrelic.Application
+	InstrumentationClient *instrumentation.Client
 	// `Client` is a pointer to an instance of the `client.Client` struct. This struct is likely used to
 	// interact with some external service or API. It is not clear from the given code what specific
 	// service or API the `client.Client` is interacting with.

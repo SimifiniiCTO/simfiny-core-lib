@@ -10,15 +10,11 @@ import "fmt"
 // "operation" and "error" that contain the values of `op` and `err.Error()` respectively.
 func (c *ConsumerClient) reportErrorEvent(op string, err error) {
 	c.Logger.Error(err.Error())
-	c.NewRelicClient.RecordCustomEvent("message_queue.error", map[string]interface{}{
-		"operation": op,
-		"error":     err.Error(),
-	})
+	// TODO: ideally we should emit a custom event here
 }
 
 // reportProcessedMessageCount increments the processed message count metric
 func (c *ConsumerClient) reportProcessedMessageCount(op string) {
 	c.Logger.Info(fmt.Sprintf("Processed message %s", op))
-	metricName := fmt.Sprintf("component.message_queue.action.processed_messages.op.%s", op)
-	c.NewRelicClient.RecordCustomMetric(metricName, 1)
+	// TODO: ideally we should increment the processed message count metric here
 }

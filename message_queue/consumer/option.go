@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
 	"github.com/SimifiniiCTO/simfiny-core-lib/message_queue/client"
-	"github.com/newrelic/go-agent/v3/newrelic"
 	"go.uber.org/zap"
 )
 
@@ -40,9 +40,9 @@ func WithLogger(logger *zap.Logger) Option {
 }
 
 // WithNewRelicClient sets the new relic client for the consumer
-func WithNewRelicClient(nrClient *newrelic.Application) Option {
+func WithInstrumentationClient(instrumentationClient *instrumentation.Client) Option {
 	return func(c *ConsumerClient) {
-		c.NewRelicClient = nrClient
+		c.InstrumentationClient = instrumentationClient
 	}
 }
 
@@ -68,7 +68,7 @@ func WithAwsClient(sqsClient *client.Client) Option {
 func (c *ConsumerClient) Validate() error {
 	if c.SqsClient == nil ||
 		c.Logger == nil ||
-		c.NewRelicClient == nil ||
+		c.InstrumentationClient == nil ||
 		c.QueueUrl == nil ||
 		c.ConcurrencyFactor == 0 ||
 		c.MessageProcessTimeout == 0 ||
