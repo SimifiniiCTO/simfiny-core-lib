@@ -345,29 +345,29 @@ func (s *Client) GetStreamServerInterceptors() []grpc.StreamServerInterceptor {
 
 // GetUnaryClientInterceptors implements IServiceTelemetry
 func (s *Client) GetUnaryClientInterceptors() []grpc.UnaryClientInterceptor {
-	opts := []logging.Option{
+	/*opts := []logging.Option{
 		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 		logging.WithDurationField(logging.DefaultDurationToFields),
 		logging.WithFieldsFromContext(logging.ExtractFields),
-	}
+	}*/
 
 	return []grpc.UnaryClientInterceptor{
 		nrgrpc.UnaryClientInterceptor,
-		logging.UnaryClientInterceptor(InterceptorLogger(s.Logger), opts...),
+		// logging.UnaryClientInterceptor(InterceptorLogger(s.Logger), opts...),
 	}
 }
 
 // GetStreamClientInterceptors implements IServiceTelemetry
 func (s *Client) GetStreamClientInterceptors() []grpc.StreamClientInterceptor {
-	opts := []logging.Option{
+	/*opts := []logging.Option{
 		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 		logging.WithDurationField(logging.DefaultDurationToFields),
 		logging.WithFieldsFromContext(logging.ExtractFields),
-	}
+	}*/
 
 	return []grpc.StreamClientInterceptor{
 		nrgrpc.StreamClientInterceptor,
-		logging.StreamClientInterceptor(InterceptorLogger(s.Logger), opts...),
+		// logging.StreamClientInterceptor(InterceptorLogger(s.Logger), opts...),
 	}
 }
 
