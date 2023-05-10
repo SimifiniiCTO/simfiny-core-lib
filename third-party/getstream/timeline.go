@@ -58,7 +58,6 @@ func (f *Client) GetTimelineNextPage(ctx context.Context, feedID *string, opts [
 		return nil, err
 	}
 
-	feed.GetNextPageActivities(ctx, res)
 	return res, nil
 }
 
