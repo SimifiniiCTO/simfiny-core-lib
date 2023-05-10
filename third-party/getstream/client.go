@@ -133,14 +133,13 @@ type IClient interface {
 	// mentioned or receives a direct message, from the user's followers in reverse chronological order.
 	// The method returns a pointer to the retrieved `stream.NotificationFeedResponse` object and an error
 	// if there was an issue retrieving the feed.
-	GetNotificationTimeline(ctx context.Context, feedID *string) (*stream.NotificationFeedResponse, error)
+	GetNotificationTimeline(ctx context.Context, feedID *string, opts []stream.GetActivitiesOption) (*stream.NotificationFeedResponse, error)
 
-	// The above code is defining a method called `GetTimelineNextPage` in the Go programming language.
-	// This method takes in a context, a pointer to a string representing a feed ID, and a pointer to a
-	// `FlatFeedResponse` struct representing the next page of a timeline feed. The method returns a
-	// pointer to a `FlatFeedResponse` struct and an error. The purpose of this method is to retrieve the
-	// next page of a timeline feed given the current page and feed ID.
-	GetTimelineNextPage(ctx context.Context, feedID *string, next *stream.FlatFeedResponse) (*stream.FlatFeedResponse, error)
+	// The above code is defining a method called `GetTimelineWithOptions` in the Go programming language.
+	// This method takes in a context object, a pointer to a string representing a feed ID, and an array of
+	// options for getting activities. It returns a `FlatFeedResponse` object and an error. This method is
+	// likely used to retrieve a timeline of activities from a feed with the specified ID and options.
+	GetTimelineNextPage(ctx context.Context, feedID *string, opts []stream.GetActivitiesOption) (*stream.FlatFeedResponse, error)
 }
 
 var _ IClient = (*Client)(nil)

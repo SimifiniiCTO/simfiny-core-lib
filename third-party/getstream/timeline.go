@@ -39,29 +39,7 @@ func (f *Client) GetTimeline(ctx context.Context, feedID *string) (*stream.FlatF
 	return res, nil
 }
 
-func (f *Client) GetTimelineNextPage(ctx context.Context, feedID *string, next *stream.FlatFeedResponse) (*stream.FlatFeedResponse, error) {
-	txn := f.instrumentationClient.GetTraceFromContext(ctx)
-	span := f.instrumentationClient.StartSegment(txn, "getstream.get_timeline_next_page")
-	defer span.End()
-
-	if feedID == nil {
-		return nil, fmt.Errorf("invalid input argument. feedId: %v", feedID)
-	}
-
-	feed, err := f.GetFlatFeedFromFeedID(feedID)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := feed.GetNextPageActivities(ctx, next)
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
-}
-
-func (f *Client) GetTimelineWithLimit(ctx context.Context, feedID *string, limit int) (*stream.FlatFeedResponse, error) {
+func (f *Client) GetTimelineNextPage(ctx context.Context, feedID *string, opts []stream.GetActivitiesOption) (*stream.FlatFeedResponse, error) {
 	txn := f.instrumentationClient.GetTraceFromContext(ctx)
 	span := f.instrumentationClient.StartSegment(txn, "getstream.get_timeline")
 	defer span.End()
@@ -75,7 +53,7 @@ func (f *Client) GetTimelineWithLimit(ctx context.Context, feedID *string, limit
 		return nil, err
 	}
 
-	res, err := feed.GetActivities(ctx, stream.WithActivitiesLimit(limit))
+	res, err := feed.GetActivities(ctx, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +68,7 @@ func (f *Client) GetTimelineWithLimit(ctx context.Context, feedID *string, limit
 // It returns a slice of `stream.NotificationFeedResult` objects and an error if there was a problem
 // retrieving the activities. The method takes a `context.Context` object as the first parameter to
 // allow for cancellation or timeout of the request.
-func (f *Client) GetNotificationTimeline(ctx context.Context, feedID *string) (*stream.NotificationFeedResponse, error) {
+func (f *Client) GetNotificationTimeline(ctx context.Context, feedID *string, opts []stream.GetActivitiesOption) (*stream.NotificationFeedResponse, error) {
 	txn := f.instrumentationClient.GetTraceFromContext(ctx)
 	span := f.instrumentationClient.StartSegment(txn, "getstream.get_notification_timeline")
 	defer span.End()
@@ -104,5 +82,5 @@ func (f *Client) GetNotificationTimeline(ctx context.Context, feedID *string) (*
 		return nil, err
 	}
 
-	return feed.GetActivities(ctx, stream.WithActivitiesLimit(100))
+	return feed.GetActivities(ctx, opts...)
 }
