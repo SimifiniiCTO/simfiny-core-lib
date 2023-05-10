@@ -31,7 +31,57 @@ func (f *Client) GetTimeline(ctx context.Context, feedID *string) (*stream.FlatF
 		return nil, err
 	}
 
-	return feed.GetActivities(ctx, stream.WithActivitiesLimit(200))
+	res, err := feed.GetActivities(ctx, stream.WithActivitiesLimit(200))
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (f *Client) GetTimelineNextPage(ctx context.Context, feedID *string, next *stream.FlatFeedResponse) (*stream.FlatFeedResponse, error) {
+	txn := f.instrumentationClient.GetTraceFromContext(ctx)
+	span := f.instrumentationClient.StartSegment(txn, "getstream.get_timeline_next_page")
+	defer span.End()
+
+	if feedID == nil {
+		return nil, fmt.Errorf("invalid input argument. feedId: %v", feedID)
+	}
+
+	feed, err := f.GetFlatFeedFromFeedID(feedID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := feed.GetNextPageActivities(ctx, next)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (f *Client) GetTimelineWithLimit(ctx context.Context, feedID *string, limit int) (*stream.FlatFeedResponse, error) {
+	txn := f.instrumentationClient.GetTraceFromContext(ctx)
+	span := f.instrumentationClient.StartSegment(txn, "getstream.get_timeline")
+	defer span.End()
+
+	if feedID == nil {
+		return nil, fmt.Errorf("invalid input argument. feedId: %v", feedID)
+	}
+
+	feed, err := f.GetFlatFeedFromFeedID(feedID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := feed.GetActivities(ctx, stream.WithActivitiesLimit(limit))
+	if err != nil {
+		return nil, err
+	}
+
+	feed.GetNextPageActivities(ctx, res)
+	return res, nil
 }
 
 // `func (f *Client) GetNotificationTimeline(ctx context.Context, feedID *string)
