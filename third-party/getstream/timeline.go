@@ -17,7 +17,7 @@ import (
 // feed identified by the `feedID` parameter. It returns a slice of `stream.Activity` objects and an
 // error if there was a problem retrieving the activities. The method takes a `context.Context` object
 // as the first parameter to allow for cancellation or timeout of the request.
-func (f *Client) GetTimeline(ctx context.Context, feedID *string) ([]stream.Activity, error) {
+func (f *Client) GetTimeline(ctx context.Context, feedID *string) (*stream.FlatFeedResponse, error) {
 	txn := f.instrumentationClient.GetTraceFromContext(ctx)
 	span := f.instrumentationClient.StartSegment(txn, "getstream.get_timeline")
 	defer span.End()
@@ -31,12 +31,7 @@ func (f *Client) GetTimeline(ctx context.Context, feedID *string) ([]stream.Acti
 		return nil, err
 	}
 
-	resp, err := feed.GetActivities(ctx, stream.WithActivitiesLimit(100))
-	if err != nil {
-		return nil, err
-	}
-
-	return resp.Results, nil
+	return feed.GetActivities(ctx, stream.WithActivitiesLimit(200))
 }
 
 // `func (f *Client) GetNotificationTimeline(ctx context.Context, feedID *string)
@@ -45,7 +40,7 @@ func (f *Client) GetTimeline(ctx context.Context, feedID *string) ([]stream.Acti
 // It returns a slice of `stream.NotificationFeedResult` objects and an error if there was a problem
 // retrieving the activities. The method takes a `context.Context` object as the first parameter to
 // allow for cancellation or timeout of the request.
-func (f *Client) GetNotificationTimeline(ctx context.Context, feedID *string) ([]stream.NotificationFeedResult, error) {
+func (f *Client) GetNotificationTimeline(ctx context.Context, feedID *string) (*stream.NotificationFeedResponse, error) {
 	txn := f.instrumentationClient.GetTraceFromContext(ctx)
 	span := f.instrumentationClient.StartSegment(txn, "getstream.get_notification_timeline")
 	defer span.End()
@@ -59,10 +54,5 @@ func (f *Client) GetNotificationTimeline(ctx context.Context, feedID *string) ([
 		return nil, err
 	}
 
-	resp, err := feed.GetActivities(ctx, stream.WithActivitiesLimit(100))
-	if err != nil {
-		return nil, err
-	}
-
-	return resp.Results, nil
+	return feed.GetActivities(ctx, stream.WithActivitiesLimit(100))
 }

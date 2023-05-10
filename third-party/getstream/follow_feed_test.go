@@ -56,7 +56,7 @@ func TestClient_FollowFeed(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.f.FollowFeed(tt.args.ctx, tt.args.sourceFeedID, tt.args.targetFeedID, tt.args.activityCopyLimit); (err != nil) != tt.wantErr {
+			if _, err := tt.f.FollowFeed(tt.args.ctx, tt.args.sourceFeedID, tt.args.targetFeedID, tt.args.activityCopyLimit); (err != nil) != tt.wantErr {
 				t.Errorf("Client.FollowFeed() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

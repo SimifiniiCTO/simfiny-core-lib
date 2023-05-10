@@ -19,32 +19,26 @@ import (
 // there is an error adding the activity to the feed. The method first checks if the input arguments
 // are valid, gets the flat feed from the feed ID, adds the activity to the feed, and logs the creation
 // of the activity.
-func (f *Client) AddActivity(ctx context.Context, feedID *string, activity *stream.Activity) error {
+func (f *Client) AddActivity(ctx context.Context, feedID *string, activity *stream.Activity) (*stream.AddActivityResponse, error) {
 	txn := f.instrumentationClient.GetTraceFromContext(ctx)
 	span := f.instrumentationClient.StartSegment(txn, "getstream.add_activity")
 	defer span.End()
 
 	// TODO: instrument this
 	if activity == nil {
-		return fmt.Errorf("invalid input argument. activity: %v", activity)
+		return nil, fmt.Errorf("invalid input argument. activity: %v", activity)
 	}
 
 	if feedID == nil {
-		return fmt.Errorf("invalid input argument. feedId: %v", feedID)
+		return nil, fmt.Errorf("invalid input argument. feedId: %v", feedID)
 	}
 
 	feed, err := f.GetFlatFeedFromFeedID(feedID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	res, err := feed.AddActivity(ctx, *activity)
-	if err != nil {
-		return err
-	}
-
-	f.logger.Info(fmt.Sprintf("created follow request record via getstream. activityID: %s", res.Activity.ID))
-	return nil
+	return feed.AddActivity(ctx, *activity)
 }
 
 // The `DeleteActivity` function is a method of the `Client` struct that deletes an activity from a
@@ -53,33 +47,27 @@ func (f *Client) AddActivity(ctx context.Context, feedID *string, activity *stre
 // there is an issue with the input arguments or if there is an error deleting the activity from the
 // feed. The method first checks if the input arguments are valid, gets the flat feed from the feed ID,
 // removes the activity from the feed using the foreign ID, and logs the removal of the activity.
-func (f *Client) DeleteActivity(ctx context.Context, feedID *string, activityForeignID *string) error {
+func (f *Client) DeleteActivity(ctx context.Context, feedID *string, activityForeignID *string) (*stream.RemoveActivityResponse, error) {
 	txn := f.instrumentationClient.GetTraceFromContext(ctx)
 	span := f.instrumentationClient.StartSegment(txn, "getstream.delete_activity")
 	defer span.End()
 
 	if activityForeignID == nil {
 		err := fmt.Errorf("invalid input argument. postID: %d", activityForeignID)
-		return err
+		return nil, err
 	}
 
 	if feedID == nil {
 		err := fmt.Errorf("invalid input argument. feedId: %v", feedID)
-		return err
+		return nil, err
 	}
 
 	feed, err := f.GetFlatFeedFromFeedID(feedID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	res, err := feed.RemoveActivityByForeignID(ctx, *activityForeignID)
-	if err != nil {
-		return err
-	}
-
-	f.logger.Info(fmt.Sprintf("activity removal attempt. status: %s", res.Removed))
-	return nil
+	return feed.RemoveActivityByForeignID(ctx, *activityForeignID)
 }
 
 // `func (f *Client) AddActivityToManyFeeds(ctx context.Context, activity *stream.Activity, feeds

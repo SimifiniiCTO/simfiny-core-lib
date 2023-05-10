@@ -77,7 +77,7 @@ func TestClient_AddActivity(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.f.AddActivity(tt.args.ctx, tt.args.feedID, tt.args.activity); (err != nil) != tt.wantErr {
+			if _, err := tt.f.AddActivity(tt.args.ctx, tt.args.feedID, tt.args.activity); (err != nil) != tt.wantErr {
 				t.Errorf("Client.AddActivity() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
@@ -157,7 +157,7 @@ func TestClient_DeleteActivity(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.f.DeleteActivity(tt.args.ctx, tt.args.feedID, tt.args.activityForeignID); (err != nil) != tt.wantErr {
+			if _, err := tt.f.DeleteActivity(tt.args.ctx, tt.args.feedID, tt.args.activityForeignID); (err != nil) != tt.wantErr {
 				t.Errorf("Client.DeleteActivity() error = %v, wantErr %v", err, tt.wantErr)
 			}
 

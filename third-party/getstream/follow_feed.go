@@ -16,29 +16,24 @@ import (
 // This is a method defined on a struct type `Client`. The method is called `FollowFeed` and it takes
 // in four arguments: a context, two strings `sourceFeedID` and `targetFeedID`, and a slice of
 // `stream.FollowFeedOption` options. The method returns an error.
-func (f *Client) FollowFeed(ctx context.Context, sourceFeedID, targetFeedID string, opts []stream.FollowFeedOption) error {
+func (f *Client) FollowFeed(ctx context.Context, sourceFeedID, targetFeedID string, opts []stream.FollowFeedOption) (*stream.BaseResponse, error) {
 	txn := f.instrumentationClient.GetTraceFromContext(ctx)
 	span := f.instrumentationClient.StartSegment(txn, "getstream.follow_feed")
 	defer span.End()
 
 	if sourceFeedID == "" || targetFeedID == "" {
-		return fmt.Errorf("invalid input argument. sourceFeedID: %s, targetFeedID: %s", sourceFeedID, targetFeedID)
+		return nil, fmt.Errorf("invalid input argument. sourceFeedID: %s, targetFeedID: %s", sourceFeedID, targetFeedID)
 	}
 
 	sourceFeed, err := f.GetFlatFeedFromFeedID(&sourceFeedID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	targetFeed, err := f.GetFlatFeedFromFeedID(&targetFeedID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if _, err = sourceFeed.Follow(ctx, targetFeed, opts...); err != nil {
-		return err
-	}
-
-	f.logger.Info(fmt.Sprintf("created follow record via getstream. target: %s, source: %s", targetFeedID, sourceFeedID))
-	return nil
+	return sourceFeed.Follow(ctx, targetFeed, opts...)
 }

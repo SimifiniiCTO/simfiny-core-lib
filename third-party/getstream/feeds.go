@@ -11,8 +11,6 @@ import (
 	"strings"
 
 	"github.com/GetStream/stream-go2/v7"
-	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
-	"go.uber.org/zap"
 )
 
 type FeedType string
@@ -25,47 +23,6 @@ const (
 
 func (f FeedType) String() string {
 	return string(f)
-}
-
-// This is defining a struct type called `Client` which will be used to create instances of the
-// GetStream client. The struct contains fields for the GetStream API key, secret, a pointer to a
-// `stream.Client` instance, a logger, and an instrumentation client.
-type Client struct {
-	// `getstreamKey` is a field in the `Client` struct that stores the GetStream API key as a string. It
-	// is used to authenticate requests to the GetStream API.
-	getstreamKey string
-	// `getstreamSecret` is a field in the `Client` struct that stores the GetStream API secret as a
-	// string. It is used to authenticate requests to the GetStream API along with the API key.
-	getstreamSecret string
-	// `client                *stream.Client` is a field in the `Client` struct that stores a pointer to a
-	// `stream.Client` instance. This instance is used to make requests to the GetStream API.
-	client *stream.Client
-	// `logger *zap.Logger` is a field in the `Client` struct that stores a pointer to a `zap.Logger`
-	// instance. This instance is used for logging messages related to the GetStream client. `zap` is a
-	// popular logging library in the Go programming language.
-	logger *zap.Logger
-	// `instrumentationClient *instrumentation.Client` is a field in the `Client` struct that stores a
-	// pointer to an `instrumentation.Client` instance. This instance is used for instrumenting the
-	// GetStream client, which means collecting and analyzing data related to the performance and behavior
-	// of the client. This can help identify issues and optimize the client's performance.
-	instrumentationClient *instrumentation.Client
-}
-
-// The function creates a new client with optional configuration options.
-func New(opts ...Option) (*Client, error) {
-	c := &Client{}
-	c.ApplyOptions(opts...)
-	if err := c.Validate(); err != nil {
-		return nil, err
-	}
-
-	streamClient, err := stream.New(c.getstreamKey, c.getstreamSecret)
-	if err != nil {
-		return nil, err
-	}
-
-	c.client = streamClient
-	return c, nil
 }
 
 // `func (f *Client) GetFlatFeedFromFeedID(feedID *string) (*stream.FlatFeed, error)` is a method of
