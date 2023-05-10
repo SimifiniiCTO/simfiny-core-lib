@@ -1,6 +1,8 @@
 package algoliasearch
 
 import (
+	"context"
+
 	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
 	"github.com/algolia/algoliasearch-client-go/v3/algolia/opt"
 	"github.com/algolia/algoliasearch-client-go/v3/algolia/search"
@@ -10,7 +12,11 @@ type (
 	// IClient is the interface for the algolia search handler
 	IClient interface {
 		// Sends a piece of data to algolia search
-		Send(data any) (*string, error)
+		Send(ctx context.Context, data Record) (*string, error)
+		// Deletes a piece of data from algolia search
+		Delete(ctx context.Context, objectId string) error
+		// Update updates a piece of data in algolia search
+		Update(ctx context.Context, record Record) error
 		// configureSearchSettings configures the search settings for the index
 		configureSearchSettings() error
 	}
@@ -25,6 +31,8 @@ type (
 		telemetrySdk *instrumentation.Client
 	}
 )
+
+var _ IClient = (*Client)(nil)
 
 // NewClient creates a new algolia search handler
 func New(opts ...Option) (*Client, error) {
