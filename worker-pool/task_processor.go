@@ -119,8 +119,8 @@ func NewTaskPoolProcessor(opts ...Option) (*TaskPoolProcessor, error) {
 	return processor, nil
 }
 
-func (p *TaskPoolProcessor) Run(taskProcessorFunc func(context.Context, *asynq.Task) error) error {
-	return p.worker.Run(asynq.HandlerFunc(taskProcessorFunc))
+func (p *TaskPoolProcessor) Run(handler asynq.Handler) error {
+	return p.worker.Run(handler)
 }
 
 func (p *TaskPoolProcessor) Validate() error {
