@@ -160,6 +160,7 @@ func NewTaskProcessor(opts ...Option) (*TaskProcessor, error) {
 		worker.WithConcurrencyFactor(*tp.concurrencyFactor),
 		worker.WithRedisAddress(tp.redisConnectionAddress),
 		worker.WithTaskHandler(tp.taskHandler),
+		worker.WithInstrumentationClient(tp.instrumentationClient),
 	}...)
 	if err != nil {
 		return nil, err
