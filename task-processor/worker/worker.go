@@ -1,9 +1,12 @@
 package worker
 
 import (
+	"context"
 	"errors"
+	"fmt"
 
 	"github.com/SimifiniiCTO/asynq"
+	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
 	"github.com/SimifiniiCTO/simfiny-core-lib/task-processor/taskhandler"
 )
 
@@ -33,13 +36,22 @@ type Worker struct {
 	// implementation of the `TaskHandler` interface is provided by the `task` package, which defines the
 	// specific handlers for each type of task.
 	taskHandler taskhandler.ITaskHandler
+
+	// The `instrumentationClient` field is a pointer to an instance of the `instrumentation.Client` type.
+	// This field is used to send metrics and traces to a monitoring system for observability purposes. The
+	// `instrumentation` package provides a client implementation for sending metrics and traces to various
+	// monitoring systems such as Datadog, Prometheus, and OpenTelemetry. By including this field in the
+	// `Worker` struct, the worker can send metrics and traces to a monitoring system to help diagnose and
+	// troubleshoot issues with the task processing system.
+	instrumentationClient *instrumentation.Client
 }
 
 var (
-	ErrRedisAddressNotSet      = errors.New("redis address not set")
-	ErrRedisPasswordNotSet     = errors.New("redis password not set")
-	ErrConcurrencyFactorNotSet = errors.New("concurrency factor not set")
-	ErrTaskHandlerNotSet       = errors.New("task handler not set")
+	ErrRedisAddressNotSet          = errors.New("redis address not set")
+	ErrRedisPasswordNotSet         = errors.New("redis password not set")
+	ErrConcurrencyFactorNotSet     = errors.New("concurrency factor not set")
+	ErrTaskHandlerNotSet           = errors.New("task handler not set")
+	ErrInstrumentationClientNotSet = errors.New("instrumentation client not set")
 )
 
 // Option is a function that configures a worker
@@ -106,7 +118,38 @@ func NewWorker(opts ...Option) (*Worker, error) {
 //
 // ```
 func (w *Worker) Start() error {
-	return w.srv.Start(w.taskHandler.RegisterTaskHandler())
+	mux := w.taskHandler.RegisterTaskHandler()
+	mux.Use(w.instrumentationMiddleware)
+
+	return w.srv.Start(mux)
+}
+
+// `func (w *Worker) instrumentationMiddleware(next asynq.Handler) asynq.Handler` is a middleware
+// function that wraps the `asynq.Handler` passed as an argument to it. It returns a new
+// `asynq.Handler` that adds instrumentation to the processing of tasks by the worker. Specifically, it
+// creates a new trace span for each task processed by the worker and sends metrics to a monitoring
+// system to track the success or failure of each task. The middleware function takes the
+// `asynq.Handler` passed as an argument and returns a new `asynq.Handler` that wraps the original
+// handler. The new handler executes the original handler and then sends metrics and traces to the
+// monitoring system based on the success or failure of the task.
+func (w *Worker) instrumentationMiddleware(next asynq.Handler) asynq.Handler {
+	return asynq.HandlerFunc(func(ctx context.Context, t *asynq.Task) error {
+		tnxName := fmt.Sprintf("processing_task/%s", t.Type())
+		txn := w.instrumentationClient.GetTraceFromContext(ctx)
+		span := w.instrumentationClient.StartSegment(txn, tnxName)
+		defer span.End()
+
+		err := next.ProcessTask(ctx, t)
+		// TODO: decrement task in progress counter metric
+		if err != nil {
+			txnName := fmt.Sprintf("task_failed/%s", t.Type())
+			w.instrumentationClient.RecordMetric(txnName, 1)
+		}
+
+		txnName := fmt.Sprintf("task_suceeded/%s", t.Type())
+		w.instrumentationClient.RecordMetric(txnName, 1)
+		return err
+	})
 }
 
 // Stop stops the worker
@@ -148,6 +191,10 @@ func (w *Worker) Validate() error {
 		return ErrTaskHandlerNotSet
 	}
 
+	if w.instrumentationClient == nil {
+		return ErrInstrumentationClientNotSet
+	}
+
 	// validate the worker
 	return nil
 }
@@ -170,5 +217,12 @@ func WithConcurrencyFactor(concurrencyFactor int) Option {
 func WithTaskHandler(taskHandler taskhandler.ITaskHandler) Option {
 	return func(w *Worker) {
 		w.taskHandler = taskHandler
+	}
+}
+
+// WithInstrumentationClient sets the instrumentation client
+func WithInstrumentationClient(instrumentationClient *instrumentation.Client) Option {
+	return func(w *Worker) {
+		w.instrumentationClient = instrumentationClient
 	}
 }
