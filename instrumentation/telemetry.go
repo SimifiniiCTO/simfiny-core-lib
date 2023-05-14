@@ -115,6 +115,8 @@ type IServiceTelemetry interface {
 	GetServiceName() string
 	GetServiceVersion() string
 	GetServiceEnvironment() string
+	RecordEvent(eventType string, params map[string]interface{})
+	RecordMetric(metric string, metricValue float64)
 	IsEnabled() bool
 	GetTraceFromContext(ctx context.Context) *newrelic.Transaction
 	GetTraceFromRequest(r *http.Request) *newrelic.Transaction
@@ -161,6 +163,18 @@ func New(opts ...Option) (*Client, error) {
 
 	telemetry.baseMetrics = baseMetrics
 	return telemetry, nil
+}
+
+// RecordMetric takes two parameters: `metric` of type `string` and `metricValue` of type `float64`. The purpose of
+// this method is to record a metric with a given name and value.
+func (s *Client) RecordMetric(metric string, metricValue float64) {
+	s.client.RecordCustomMetric(metric, metricValue)
+}
+
+// RecordEvent takes two parameters: `eventType` of type `string` and `params` of type `map[string]interface{}`.
+// The purpose of this method is to record a custom event with a given name and parameters.
+func (s *Client) RecordEvent(eventType string, params map[string]interface{}) {
+	s.client.RecordCustomEvent(eventType, params)
 }
 
 // Enabled implements IServiceTelemetry
