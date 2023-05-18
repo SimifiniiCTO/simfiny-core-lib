@@ -369,10 +369,13 @@ func (s *Client) configureNewrelicClient() error {
 		newrelic.ConfigAppName(s.ServiceName),
 		newrelic.ConfigLicense(s.NewrelicKey),
 		newrelic.ConfigAppLogForwardingEnabled(s.Enabled),
+		newrelic.ConfigAppLogForwardingMaxSamplesStored(1000),
+		newrelic.ConfigCustomInsightsEventsMaxSamplesStored(1000),
 		func(cfg *newrelic.Config) {
 			cfg.ErrorCollector.RecordPanics = s.Enabled
 			cfg.ErrorCollector.Enabled = s.Enabled
 			cfg.TransactionEvents.Enabled = s.Enabled
+			cfg.TransactionEvents.MaxSamplesStored = 1000
 			cfg.Enabled = s.Enabled
 			cfg.Attributes.Enabled = s.Enabled
 			cfg.TransactionTracer.Enabled = s.Enabled
