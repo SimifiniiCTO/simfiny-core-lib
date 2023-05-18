@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	nrgorilla "github.com/newrelic/go-agent/v3/integrations/nrgorilla"
 	"github.com/newrelic/go-agent/v3/integrations/nrgrpc"
 	"github.com/newrelic/go-agent/v3/integrations/nrzap"
@@ -331,29 +330,15 @@ func (s *Client) StartSegment(txn *newrelic.Transaction, name string) *newrelic.
 
 // GetUnaryServerInterceptors implements IServiceTelemetry
 func (s *Client) GetUnaryServerInterceptors() []grpc.UnaryServerInterceptor {
-	opts := []logging.Option{
-		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
-		logging.WithDurationField(logging.DefaultDurationToFields),
-		logging.WithFieldsFromContext(logging.ExtractFields),
-	}
-
 	return []grpc.UnaryServerInterceptor{
 		nrgrpc.UnaryServerInterceptor(s.client),
-		logging.UnaryServerInterceptor(InterceptorLogger(s.Logger), opts...),
 	}
 }
 
 // GetStreamServerInterceptors implements IServiceTelemetry
 func (s *Client) GetStreamServerInterceptors() []grpc.StreamServerInterceptor {
-	opts := []logging.Option{
-		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
-		logging.WithDurationField(logging.DefaultDurationToFields),
-		logging.WithFieldsFromContext(logging.ExtractFields),
-	}
-
 	return []grpc.StreamServerInterceptor{
 		nrgrpc.StreamServerInterceptor(s.client),
-		logging.StreamServerInterceptor(InterceptorLogger(s.Logger), opts...),
 	}
 }
 
