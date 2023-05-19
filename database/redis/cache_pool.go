@@ -16,7 +16,7 @@ import (
 // version of the service in Redis with an expiry time of one minute and schedules a periodic update of
 // the version using a ticker. The function takes a ticker and a stop channel as arguments to control
 // the periodic version updates.
-func (c *Client) startCachePool(ticker *time.Ticker, stopCh <-chan struct{}) {
+func (c *Client) StartCachePool(ticker *time.Ticker, stopCh <-chan struct{}) {
 	c.pool = &redis.Pool{
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
