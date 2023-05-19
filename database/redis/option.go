@@ -43,6 +43,12 @@ func WithCacheTTLInSeconds(cacheTTLInSeconds int) Option {
 	}
 }
 
+func WithTlsEnabled(enabled bool) Option {
+	return func(c *Client) {
+		c.tlsEnabled = enabled
+	}
+}
+
 // Validate validates the configuration of the Redis client.
 func (c *Client) Validate() error {
 	if c.URI == "" {

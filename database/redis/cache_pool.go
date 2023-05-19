@@ -67,5 +67,9 @@ func (c *Client) getCacheConn() (redis.Conn, error) {
 		}
 	}
 
+	if c.tlsEnabled {
+		opts = append(opts, redis.DialUseTLS(true))
+	}
+
 	return redis.Dial("tcp", redisUrl.Host, opts...)
 }
