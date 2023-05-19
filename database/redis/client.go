@@ -54,6 +54,11 @@ type Client struct {
 	// operations. This allows for more detailed and organized logging, which can be helpful for debugging
 	// and troubleshooting issues with the Redis client.
 	Logger *zap.Logger
+	// The `tlsEnabled` field is a boolean value that is likely used to indicate whether or not the Redis
+	// client should use Transport Layer Security (TLS) encryption when connecting to the Redis server. If
+	// `tlsEnabled` is set to `true`, the client will use TLS encryption to secure the connection to the
+	// Redis server. If it is set to `false`, the client will not use TLS encryption.
+	tlsEnabled bool
 }
 
 // CloseCacheConn closes the redis connection
