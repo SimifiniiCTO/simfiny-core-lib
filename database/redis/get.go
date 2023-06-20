@@ -54,3 +54,24 @@ func (c *Client) GetMany(ctx context.Context, keys []string) ([][]byte, error) {
 
 	return values, nil
 }
+
+// Get reads a value from the cache
+func (c *Client) Exists(ctx context.Context, key string) (bool, error) {
+	txn := c.telemetrySdk.GetTraceFromContext(ctx)
+	span := c.telemetrySdk.StartRedisDatastoreSegment(txn, RedisReadFromCacheTxn.String())
+	defer span.End()
+
+	// validate the key
+	if key == "" {
+		return false, fmt.Errorf("empty key")
+	}
+
+	conn := c.pool.Get()
+	defer conn.Close()
+	value, err := redis.Bool(conn.Do("EXISTS", key))
+	if err != nil {
+		return false, err
+	}
+
+	return value, nil
+}
