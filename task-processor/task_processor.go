@@ -163,7 +163,7 @@ func NewTaskProcessor(opts ...Option) (*TaskProcessor, error) {
 	)
 
 	// initialize new scheudler
-	loc, err := time.LoadLocation("America/Los_Angeles")
+	loc, err := time.LoadLocation("America/New_York")
 	if err != nil {
 		panic(err)
 	}
