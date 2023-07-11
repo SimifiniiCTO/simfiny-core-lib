@@ -18,7 +18,20 @@ func (tp *TaskProcessor) EnqueueTask(ctx context.Context, task *asynq.Task, opts
 	return tp.client.EnqueueContext(ctx, task, opts...)
 }
 
-// StartWorker starts the task processor worker
+// The `EnqueueRecurringTask` function is used to enqueue a recurring task with a specified interval.
+// It takes in the context, the task to be enqueued, the interval at which the task should be repeated,
+// and optional options for the task. It returns a pointer to a string representing the entry ID of the
+// recurring task and an error if any.
+func (tp *TaskProcessor) EnqueueRecurringTask(ctx context.Context, task *asynq.Task, interval ProcessingInterval, opts ...asynq.Option) (*string, error) {
+	entryID, err := tp.scheduler.Register(interval.String(), task, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entryID, nil
+}
+
+// Start starts the task processor worker as well as the scheduler
 // ```go
 //
 //			tp, err := NewTaskProcessor(...opts)
@@ -27,12 +40,17 @@ func (tp *TaskProcessor) EnqueueTask(ctx context.Context, task *asynq.Task, opts
 //			}
 //
 //	     	// start the worker asynchronously in another go routine
-//		 	go tp.StartWorker()
+//		 	go tp.Start()
 //
 // ```
-func (tp *TaskProcessor) StartWorker() error {
+func (tp *TaskProcessor) Start() error {
 	// start the worker
 	if err := tp.worker.Start(); err != nil {
+		return err
+	}
+
+	// start the scheduler
+	if err := tp.scheduler.Start(); err != nil {
 		return err
 	}
 
@@ -51,7 +69,7 @@ func (tp *TaskProcessor) StartWorker() error {
 //			defer tp.Close()
 //	     	// start the worker asynchronously in another go routine
 //		 	go func(fn TaskProcessorHandler) {
-//				tp.StartWorker(fn)
+//				tp.Start(fn)
 //			}(fn)
 //
 // ```
