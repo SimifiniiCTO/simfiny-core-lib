@@ -3,6 +3,7 @@ package taskprocessor
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/SimifiniiCTO/asynq"
 	"github.com/SimifiniiCTO/simfiny-core-lib/instrumentation"
@@ -78,16 +79,22 @@ type TaskProcessor struct {
 	// processed. However, without more context on how the `taskHandler` property is used within the
 	// `TaskProcessor` struct, it is difficult to say for certain.
 	taskHandler taskhandler.ITaskHandler
+
+	// The `scheduler *asynq.Scheduler` property is a pointer to an instance of the `asynq.Scheduler`
+	// struct. The `asynq.Scheduler` is responsible for scheduling tasks to be enqueued in the Asynq task
+	// queue at a specific time in the future. It allows you to delay the execution of tasks by specifying
+	// a delay duration or a specific time at which the task should be enqueued.
+	scheduler *asynq.Scheduler
 }
 
 // IProcessor is an interface that defines the methods that must be implemented by a task processor
 type IProcessor interface {
 	// `Start() error` is a method of the `TaskProcessor` struct that starts the worker
-	// to process tasks from the Asynq task queue. It takes a `TaskProcessorHandler` function as an
+	// to process tasks from the Asynq task queue as well as the scheduler process. It takes a `TaskProcessorHandler` function as an
 	// argument, which is a function that will be called for each task that is processed by the worker. The
 	// `TaskProcessorHandler` function takes a `context.Context` and an `*asynq.Task` as arguments, and
 	// returns an error. The `Start` method returns an error if there is a problem starting the worker.
-	StartWorker() error
+	Start() error
 	// `Validate()` is a method of the `TaskProcessor` struct that checks if all the required properties of
 	// the struct have been set. It returns an error if any of the required properties are not set,
 	// indicating that the `TaskProcessor` is not ready to start processing tasks. This method is typically
@@ -127,7 +134,7 @@ var _ IProcessor = (*TaskProcessor)(nil)
 //	defer tp.Close()
 //	// start the worker asynchronously
 //	go func() {
-//		if err := tp.StartWorker(handler); err != nil {
+//		if err := tp.Start(handler); err != nil {
 //			log.Fatal(err)
 //		}
 //
@@ -154,6 +161,26 @@ func NewTaskProcessor(opts ...Option) (*TaskProcessor, error) {
 	tp.client = asynq.NewClient(
 		asyncClientOpt,
 	)
+
+	// initialize new scheudler
+	loc, err := time.LoadLocation("America/Los_Angeles")
+	if err != nil {
+		panic(err)
+	}
+
+	schedulerOpts := &asynq.SchedulerOpts{
+		Location: loc,
+		PreEnqueueFunc: func(task *asynq.Task, opts []asynq.Option) {
+			// TODO: we need to emit a metric to new relic that we are enqueuing a recurring task
+		},
+		PostEnqueueFunc: func(info *asynq.TaskInfo, err error) {
+			// TODO: we  need to emit a metric to new relic that we have processed a recurring task
+		},
+		EnqueueErrorHandler: func(task *asynq.Task, opts []asynq.Option, err error) {
+		},
+	}
+
+	tp.scheduler = asynq.NewScheduler(asyncClientOpt, schedulerOpts)
 
 	// define the worker
 	worker, err := worker.NewWorker([]worker.Option{
