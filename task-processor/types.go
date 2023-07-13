@@ -11,6 +11,11 @@ const (
 	Every24Hours   ProcessingInterval = "@every 24h"
 	Every30Minutes ProcessingInterval = "@every 30m"
 	Every15Minutes ProcessingInterval = "@every 15m"
+	Every10Minutes ProcessingInterval = "@every 10m"
+	Every5Minutes  ProcessingInterval = "@every 5m"
+	Every3Minutes  ProcessingInterval = "@every 3m"
+	Every1Minutes  ProcessingInterval = "@every 1m"
+	Every30Seconds ProcessingInterval = "@every 30s"
 )
 
 // The `String()` method is a method defined on the `ProcessingInterval` type. It is used to convert a
